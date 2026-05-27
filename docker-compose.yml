@@ -1,0 +1,22 @@
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: quiniela-mariadb
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+    environment:
+      MARIADB_DATABASE: "${DB_DATABASE:-quiniela_app}"
+      MARIADB_ROOT_PASSWORD: "${DB_PASSWORD:-secret}"
+    volumes:
+      - quiniela-mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
+
+volumes:
+  quiniela-mariadb-data:
+    driver: local
