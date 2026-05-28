@@ -76,3 +76,20 @@ docker compose down -v
 ## HTTPS
 
 Este compose expone Nginx en `APP_PORT`, por defecto el puerto `80`. Para HTTPS puedes poner delante un proxy como Traefik, Caddy o Nginx Proxy Manager, o instalar certificados en el Nginx del host y reenviar el trafico al contenedor.
+
+## Dokploy
+
+Si usas Dokploy, despliega como Docker Compose y no como Stack, porque este proyecto construye imagenes desde el `Dockerfile`.
+
+En Dokploy puedes usar `docker-compose.yml` junto con `docker-compose.dokploy.yml`. El override de Dokploy no publica puertos en el host; Dokploy/Traefik debe enrutar el dominio al servicio `nginx`, puerto interno `80`.
+
+Configura el dominio en Dokploy asi:
+
+```text
+Service: nginx
+Port: 80
+HTTPS: enabled
+Certificate: Let's Encrypt
+```
+
+Define las variables del archivo `.env.production.example` en la pestana Environment de Dokploy. Este compose ya usa `env_file: .env`, por lo que Dokploy escribira esas variables en el `.env` del despliegue.
