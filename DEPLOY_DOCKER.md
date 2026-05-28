@@ -91,6 +91,20 @@ Ese archivo no publica puertos en el host; Dokploy/Traefik debe enrutar el domin
 
 Tambien puedes usar `docker-compose.yml` junto con `docker-compose.dokploy.yml` si tu instalacion permite indicar varios archivos compose.
 
+Si no tienes dominio y quieres entrar por la IP de la VPS, usa:
+
+```text
+dokploy-ip.compose.yml
+```
+
+Ese archivo publica la app en el puerto `8080`, porque el puerto `80` normalmente ya lo usa Dokploy/Traefik. En ese caso configura:
+
+```text
+APP_URL=http://IP_DE_TU_VPS:8080
+```
+
+Y abre en el firewall el puerto `8080`.
+
 Configura el dominio en Dokploy asi:
 
 ```text
