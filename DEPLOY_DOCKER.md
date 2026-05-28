@@ -75,7 +75,7 @@ docker compose down -v
 
 ## HTTPS
 
-Este compose expone Nginx en `APP_PORT`, por defecto el puerto `80`. Para HTTPS puedes poner delante un proxy como Traefik, Caddy o Nginx Proxy Manager, o instalar certificados en el Nginx del host y reenviar el trafico al contenedor.
+Este compose expone Nginx en `APP_PORT`, por defecto el puerto `8080`, para evitar conflicto con proxies como Dokploy/Traefik que normalmente usan el puerto `80`. Para HTTPS puedes poner delante un proxy como Traefik, Caddy o Nginx Proxy Manager, o instalar certificados en el Nginx del host y reenviar el trafico al contenedor.
 
 ## Dokploy
 
