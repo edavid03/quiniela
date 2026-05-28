@@ -81,7 +81,15 @@ Este compose expone Nginx en `APP_PORT`, por defecto el puerto `80`. Para HTTPS 
 
 Si usas Dokploy, despliega como Docker Compose y no como Stack, porque este proyecto construye imagenes desde el `Dockerfile`.
 
-En Dokploy puedes usar `docker-compose.yml` junto con `docker-compose.dokploy.yml`. El override de Dokploy no publica puertos en el host; Dokploy/Traefik debe enrutar el dominio al servicio `nginx`, puerto interno `80`.
+La opcion mas simple es configurar el Compose Path como:
+
+```text
+dokploy.compose.yml
+```
+
+Ese archivo no publica puertos en el host; Dokploy/Traefik debe enrutar el dominio al servicio `nginx`, puerto interno `80`.
+
+Tambien puedes usar `docker-compose.yml` junto con `docker-compose.dokploy.yml` si tu instalacion permite indicar varios archivos compose.
 
 Configura el dominio en Dokploy asi:
 
