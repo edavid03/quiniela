@@ -11,6 +11,7 @@
         'bolt' => '<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/>',
         'envelope' => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
         'clock' => '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5l3 2"/>',
+        'check' => '<path d="m5 13 4 4L19 7"/>',
     ];
 @endphp
 

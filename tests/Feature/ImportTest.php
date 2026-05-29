@@ -74,6 +74,25 @@ class ImportTest extends TestCase
             ->assertSee('Email inválido');
     }
 
+    public function test_ajax_preview_returns_only_the_rows_fragment(): void
+    {
+        $liga = $this->createLiga();
+        $admin = $this->ligaAdmin($liga);
+
+        $csv = "email,username,name\nana@correo.test,ana,Ana\n";
+        $file = UploadedFile::fake()->createWithContent('usuarios.csv', $csv);
+
+        $response = $this->actingAs($admin)
+            ->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
+            ->post(route('liga.admin.import.preview', $liga), ['file' => $file]);
+
+        $response->assertOk()
+            ->assertSee('ana@correo.test')           // contiene los datos de la fila
+            ->assertSee('Confirmar y enviar invitaciones')
+            ->assertDontSee('</html>', false)         // NO es la pagina completa...
+            ->assertDontSee('Ranking');               // ...ni trae el nav del layout
+    }
+
     public function test_admin_can_download_the_template(): void
     {
         $liga = $this->createLiga();

@@ -90,7 +90,11 @@ class ImportController extends Controller
             ];
         }
 
-        return view('admin.import.preview', [
+        // En AJAX devolvemos solo el fragmento de la tabla (preview en vivo en la
+        // misma pantalla); sin JS, la pagina completa de preview como fallback.
+        $view = $request->ajax() ? 'admin.import._rows' : 'admin.import.preview';
+
+        return view($view, [
             'liga' => $liga,
             'rows' => $rows,
         ]);
