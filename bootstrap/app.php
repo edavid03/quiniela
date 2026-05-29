@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -50,5 +51,24 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // El token CSRF rota al loguearse/activar cuenta; un doble-submit (o el
+        // reintento de un webview in-app) llega con el token viejo -> 419. Laravel
+        // ya convirtio el TokenMismatchException en HttpException(419), asi que
+        // filtramos por status. En vez de la pantalla cruda "Page Expired",
+        // volvemos al formulario con un aviso.
+        $exceptions->render(function (HttpExceptionInterface $e, Request $request) {
+            if ($e->getStatusCode() !== 419) {
+                return null; // el resto de errores HTTP siguen su curso normal
+            }
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'La página expiró. Recarga e intenta de nuevo.',
+                ], 419);
+            }
+
+            return redirect()->back()->withErrors([
+                'expired' => 'La página estuvo abierta demasiado tiempo y la sesión expiró. Vuelve a intentarlo.',
+            ]);
+        });
     })->create();

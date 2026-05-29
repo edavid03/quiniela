@@ -6,6 +6,9 @@ cd /var/www/html
 mkdir -p storage/app/public storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache
 
 if [ -z "${APP_KEY:-}" ]; then
+  echo "WARNING: APP_KEY no esta seteada. Genero una efimera, pero CAMBIARA en cada"
+  echo "         deploy/reinicio e invalidara todas las sesiones (errores 419 al loguearse)."
+  echo "         Sete APP_KEY como variable de entorno fija en Dokploy."
   export APP_KEY="$(php artisan key:generate --show --no-interaction)"
 fi
 
