@@ -4,7 +4,30 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', config('app.name', 'Quiniela').' · Quinielas privadas para tu grupo')</title>
-        <meta name="description" content="Armá tu quiniela privada del Mundial 2026: ligas con su propio admin, pronósticos, ranking automático y resultados centralizados.">
+        @php
+            $ogTitle = config('app.name', 'Quiniela Mundial').' · Tu quiniela privada del Mundial 2026';
+            $ogDescription = 'Armá tu quiniela privada del Mundial 2026: ligas con su propio admin, pronósticos, ranking automático y resultados centralizados.';
+            $ogImage = asset('images/og-image.png');
+        @endphp
+        <meta name="description" content="{{ $ogDescription }}">
+
+        {{-- Open Graph / Twitter (previews al compartir el link) --}}
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="{{ config('app.name', 'Quiniela Mundial') }}">
+        <meta property="og:title" content="{{ $ogTitle }}">
+        <meta property="og:description" content="{{ $ogDescription }}">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:image" content="{{ $ogImage }}">
+        <meta property="og:image:secure_url" content="{{ $ogImage }}">
+        <meta property="og:image:type" content="image/png">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:locale" content="es_AR">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ $ogTitle }}">
+        <meta name="twitter:description" content="{{ $ogDescription }}">
+        <meta name="twitter:image" content="{{ $ogImage }}">
+
         <link rel="icon" type="image/svg+xml" href="{{ asset('images/favicon.svg') }}">
         <link rel="shortcut icon" href="{{ asset('images/favicon.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net">
