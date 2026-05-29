@@ -20,7 +20,8 @@ RUN composer install \
     --no-progress \
     --prefer-dist \
     --optimize-autoloader \
-    --no-scripts
+    --no-scripts \
+    --ignore-platform-req=ext-gd
 
 FROM php:8.3-fpm-alpine AS app
 
@@ -29,14 +30,19 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
         bash \
         curl \
+        freetype-dev \
         icu-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
         libzip-dev \
         mariadb-client \
         oniguruma-dev \
         shadow \
         zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
         bcmath \
+        gd \
         intl \
         mbstring \
         opcache \
