@@ -36,6 +36,26 @@ class InvitationTest extends TestCase
         ]);
     }
 
+    public function test_password_validation_message_is_in_spanish(): void
+    {
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga, ['username' => 'nuevo'])->forceFill(['email_verified_at' => null]);
+        $user->save();
+
+        [, $raw] = Invitation::generate($user);
+
+        $response = $this->post(route('liga.invitation.accept', ['liga' => $liga, 'token' => $raw]), [
+            'password' => '123',
+            'password_confirmation' => '123',
+        ]);
+
+        $response->assertSessionHasErrors('password');
+
+        // Ancla el idioma: el mensaje por defecto de Laravel debe salir en espanol.
+        $errors = session('errors')->get('password');
+        $this->assertStringContainsString('caracteres', implode(' ', $errors));
+    }
+
     public function test_expired_invitation_is_invalid(): void
     {
         $liga = $this->createLiga();
