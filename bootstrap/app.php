@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\EnsureLigaAdmin;
+use App\Http\Middleware\EnsureLigaPlayer;
+use App\Http\Middleware\EnsureSuperAdmin;
+use App\Http\Middleware\SetCurrentLiga;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -13,9 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'liga' => \App\Http\Middleware\SetCurrentLiga::class,
-            'liga.admin' => \App\Http\Middleware\EnsureLigaAdmin::class,
-            'superadmin' => \App\Http\Middleware\EnsureSuperAdmin::class,
+            'liga' => SetCurrentLiga::class,
+            'liga.admin' => EnsureLigaAdmin::class,
+            'liga.player' => EnsureLigaPlayer::class,
+            'superadmin' => EnsureSuperAdmin::class,
         ]);
 
         // No hay login global: el destino depende del area (superadmin vs liga).

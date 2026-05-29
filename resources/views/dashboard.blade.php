@@ -16,7 +16,9 @@
             <p class="mt-3 max-w-2xl text-base font-semibold leading-7 text-[var(--app-muted)] sm:text-lg">Pronosticos, partidos y ranking del grupo con una identidad inspirada en Monterrey 2026.</p>
         </div>
         <div class="action-row lg:justify-end">
-            <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
+            @unless (auth()->user()->isLigaAdmin())
+                <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
+            @endunless
             <a class="btn btn-secondary" href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}">Ver ranking</a>
             @if (auth()->user()->isLigaAdmin())
                 <a class="btn btn-secondary" href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}">Administrar liga</a>
@@ -33,10 +35,17 @@
             <span class="text-sm font-black uppercase text-[var(--app-muted)]">Partidos</span>
             <strong class="relative z-10 mt-3 block font-display text-5xl font-black text-[var(--app-text)]">{{ $matchCount }}</strong>
         </article>
-        <article class="stat-tile" data-mark="3">
-            <span class="text-sm font-black uppercase text-[var(--app-muted)]">Mis pronosticos</span>
-            <strong class="relative z-10 mt-3 block font-display text-5xl font-black text-[var(--app-text)]">{{ $predictionCount }}</strong>
-        </article>
+        @if (auth()->user()->isLigaAdmin())
+            <article class="stat-tile" data-mark="3">
+                <span class="text-sm font-black uppercase text-[var(--app-muted)]">Jugadores</span>
+                <strong class="relative z-10 mt-3 block font-display text-5xl font-black text-[var(--app-text)]">{{ $playerCount }}</strong>
+            </article>
+        @else
+            <article class="stat-tile" data-mark="3">
+                <span class="text-sm font-black uppercase text-[var(--app-muted)]">Mis pronosticos</span>
+                <strong class="relative z-10 mt-3 block font-display text-5xl font-black text-[var(--app-text)]">{{ $predictionCount }}</strong>
+            </article>
+        @endif
     </section>
 
 

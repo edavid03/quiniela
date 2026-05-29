@@ -12,6 +12,8 @@ class RankingController extends Controller
     {
         $rankings = User::query()
             ->leftJoin('predicciones', 'users.id', '=', 'predicciones.usuario_id')
+            // El admin de la liga organiza, no compite: queda fuera del ranking.
+            ->where('users.role', '!=', User::ROLE_LIGA_ADMIN)
             ->select([
                 'users.id',
                 'users.name',

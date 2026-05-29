@@ -15,6 +15,7 @@ use App\Models\Equipo;
 use App\Models\Liga;
 use App\Models\Partido;
 use App\Models\Prediccion;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -103,6 +104,9 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
                 'predictionCount' => Prediccion::query()
                     ->where('usuario_id', $user->id)
                     ->count(),
+                'playerCount' => User::query()
+                    ->where('role', User::ROLE_LIGA_USER)
+                    ->count(),
                 'predictionDeadline' => Partido::fechaLimiteApuestasUtc(),
                 'nextMatches' => Partido::query()
                     ->with(['local', 'visitante'])
@@ -114,8 +118,8 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
         Route::get('rankings', [RankingController::class, 'index'])->name('rankings.index');
         Route::get('resultados', [ResultadoController::class, 'index'])->name('resultados.index');
-        Route::get('pronosticos', [PronosticoController::class, 'edit'])->name('pronosticos.edit');
-        Route::post('pronosticos', [PronosticoController::class, 'update'])->name('pronosticos.update');
+        Route::get('pronosticos', [PronosticoController::class, 'edit'])->middleware('liga.player')->name('pronosticos.edit');
+        Route::post('pronosticos', [PronosticoController::class, 'update'])->middleware('liga.player')->name('pronosticos.update');
 
         Route::middleware('liga.admin')->prefix('admin')->name('admin.')->group(function () {
             Route::get('users', [LigaUserController::class, 'index'])->name('users.index');

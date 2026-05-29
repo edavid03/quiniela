@@ -20,7 +20,7 @@ class InvitationTest extends TestCase
 
         $this->get(route('liga.invitation.show', ['liga' => $liga, 'token' => $raw]))
             ->assertOk()
-            ->assertSee('Activá tu cuenta');
+            ->assertSee('Activa tu cuenta');
 
         $this->post(route('liga.invitation.accept', ['liga' => $liga, 'token' => $raw]), [
             'password' => 'nuevaclave123',
