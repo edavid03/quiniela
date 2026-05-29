@@ -36,6 +36,20 @@ class InvitationTest extends TestCase
         ]);
     }
 
+    public function test_set_password_page_shows_the_username(): void
+    {
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga, ['username' => 'pedro.gomez'])->forceFill(['email_verified_at' => null]);
+        $user->save();
+
+        [, $raw] = Invitation::generate($user);
+
+        $this->get(route('liga.invitation.show', ['liga' => $liga, 'token' => $raw]))
+            ->assertOk()
+            ->assertSee('Tu usuario para entrar')
+            ->assertSee('pedro.gomez');
+    }
+
     public function test_password_validation_message_is_in_spanish(): void
     {
         $liga = $this->createLiga();
