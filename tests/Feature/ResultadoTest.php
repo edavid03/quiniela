@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Equipo;
 use App\Models\Partido;
 use App\Models\Prediccion;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,7 +14,9 @@ class ResultadoTest extends TestCase
 
     public function test_authenticated_users_can_view_match_results(): void
     {
-        $user = User::factory()->create();
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
+
         $local = Equipo::create([
             'id' => 1,
             'name' => 'Local FC',
@@ -59,6 +60,7 @@ class ResultadoTest extends TestCase
         ]);
 
         Prediccion::create([
+            'liga_id' => $liga->id,
             'usuario_id' => $user->id,
             'partido_id' => $partidoFinalizado->id,
             'goles_local' => 2,
@@ -68,6 +70,7 @@ class ResultadoTest extends TestCase
         ]);
 
         Prediccion::create([
+            'liga_id' => $liga->id,
             'usuario_id' => $user->id,
             'partido_id' => $partidoPendiente->id,
             'goles_local' => 0,
@@ -76,6 +79,7 @@ class ResultadoTest extends TestCase
             'puntos' => null,
         ]);
         Prediccion::create([
+            'liga_id' => $liga->id,
             'usuario_id' => $user->id,
             'partido_id' => $partidoNoAcertado->id,
             'goles_local' => 0,
@@ -85,7 +89,7 @@ class ResultadoTest extends TestCase
         ]);
 
         $this->actingAs($user)
-            ->get('/resultados')
+            ->get(route('liga.resultados.index', $liga))
             ->assertOk()
             ->assertSee('Resultados de partidos')
             ->assertSee('2 - 1')

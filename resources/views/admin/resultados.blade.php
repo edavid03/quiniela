@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.superadmin')
 
-@section('title', 'Admin resultados | '.config('app.name', 'Quiniela'))
+@section('title', 'Resultados | '.config('app.name', 'Quiniela'))
 
 @section('content')
-    <form method="POST" action="{{ route('admin.resultados.update') }}">
+    <form method="POST" action="{{ route('superadmin.resultados.update') }}">
         @csrf
 
         <section class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
@@ -12,7 +12,7 @@
                 <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Solo el administrador puede cargar o actualizar resultados. Al guardar, se recalculan los puntos de los pron&oacute;sticos.</p>
             </div>
             <div class="action-row">
-                <a href="{{ route('dashboard') }}" class="btn btn-secondary">Volver</a>
+                <a href="{{ route('superadmin.ligas.index') }}" class="btn btn-secondary">Volver</a>
                 @if ($partidos->isNotEmpty())
                     <button class="btn btn-primary" type="submit">Guardar resultados</button>
                 @endif
@@ -36,9 +36,9 @@
                         <div class="team-line">
                             <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--app-panel-soft)]">{!! $partido->local?->flagEmojiHtml() !!}</span>
                             <span class="team-name">{{ $partido->local->name ?? 'Local' }}</span>
-                            <span class="text-sm text-[var(--app-muted)]">vs</span>
-                            <span class="team-name">{{ $partido->visitante->name ?? 'Visitante' }}</span>
+                            <span class="mx-2 rounded-full bg-[var(--app-secondary)] px-2 py-1 text-xs font-black text-white">vs</span>
                             <span class="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--app-panel-soft)]">{!! $partido->visitante?->flagEmojiHtml() !!}</span>
+                            <span class="team-name">{{ $partido->visitante->name ?? 'Visitante' }}</span>
                         </div>
                         <div class="mt-2 text-sm leading-6 text-[var(--app-muted)]">
                             {{ \Carbon\Carbon::parse($partido->fecha_utc)->format('d/m/Y H:i') }} UTC

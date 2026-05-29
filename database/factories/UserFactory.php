@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Liga;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -25,12 +26,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'liga_id' => null,
             'name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'is_admin' => false,
+            'role' => User::ROLE_LIGA_USER,
             'remember_token' => Str::random(10),
         ];
     }
@@ -42,6 +44,28 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function superAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_SUPERADMIN,
+            'liga_id' => null,
+        ]);
+    }
+
+    public function ligaAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => User::ROLE_LIGA_ADMIN,
+        ]);
+    }
+
+    public function forLiga(Liga $liga): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'liga_id' => $liga->id,
         ]);
     }
 }

@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('predicciones', function (Blueprint $table) {
             $table->id();
-            
+
             $table->unsignedBigInteger('partido_id');
             $table->unsignedBigInteger('usuario_id');
-            
+
             $table->integer('goles_local');
             $table->integer('goles_visitante');
             $table->boolean('acertado')->default(false);
-            
-            $table->integer('puntos')->nullable(); 
-            
+
+            $table->integer('puntos')->nullable();
+
             $table->timestamps();
 
             $table->foreign('partido_id')->references('id')->on('partidos')->onDelete('restrict');
             $table->foreign('usuario_id')->references('id')->on('users')->onDelete('restrict');
-            
+
             // Se puede declarar el índice único aquí mismo, más limpio
             $table->unique(['partido_id', 'usuario_id']);
         });

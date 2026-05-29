@@ -1,0 +1,35 @@
+@extends('layouts.app')
+
+@section('title', 'Activar cuenta | '.config('app.name', 'Quiniela'))
+
+@section('content')
+    <section class="surface-strong w-full max-w-md p-6 sm:p-8">
+        <div class="mb-6">
+            <span class="kicker">{{ $liga->name }}</span>
+            <h1 class="mt-3 font-display text-2xl font-black leading-tight text-[var(--app-text)] sm:text-3xl">Activá tu cuenta</h1>
+            <p class="mt-2 font-semibold leading-6 text-[var(--app-muted)]">Elegí tu contraseña para entrar a la quiniela de <strong>{{ $liga->name }}</strong>.</p>
+        </div>
+
+        @if ($errors->any())
+            <div class="alert mb-5 border-red-200 bg-red-50 text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('liga.invitation.accept', ['liga' => $liga, 'token' => $token]) }}" class="grid gap-5">
+            @csrf
+
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password">
+                Contraseña
+                <input id="password" name="password" type="password" required autofocus autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
+            </label>
+
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password_confirmation">
+                Repetir contraseña
+                <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
+            </label>
+
+            <button type="submit" class="btn btn-primary w-full">Activar y entrar</button>
+        </form>
+    </section>
+@endsection

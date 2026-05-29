@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Partido;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AdminPartidoResultadoController extends Controller
@@ -64,7 +63,7 @@ class AdminPartidoResultadoController extends Controller
         }
 
         return redirect()
-            ->route('admin.resultados.edit')
+            ->route('superadmin.resultados.edit')
             ->with('status', 'Resultados guardados correctamente.');
     }
 }

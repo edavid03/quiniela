@@ -21,7 +21,6 @@ class Mundial2026Seeder extends Seeder
 
         $equipos = [
 
-
             ['id' => 1, 'name' => 'México', 'code' => 'MEX', 'grupo' => 'A'],
             ['id' => 2, 'name' => 'Sudáfrica', 'code' => 'RSA', 'grupo' => 'A'],
             ['id' => 3, 'name' => 'Corea del Sur', 'code' => 'KOR', 'grupo' => 'A'],

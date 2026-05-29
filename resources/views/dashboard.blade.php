@@ -16,10 +16,10 @@
             <p class="mt-3 max-w-2xl text-base font-semibold leading-7 text-[var(--app-muted)] sm:text-lg">Pronosticos, partidos y ranking del grupo con una identidad inspirada en Monterrey 2026.</p>
         </div>
         <div class="action-row lg:justify-end">
-            <a class="btn btn-primary" href="{{ route('pronosticos.edit') }}">Crear o editar pronosticos</a>
-            <a class="btn btn-secondary" href="{{ route('rankings.index') }}">Ver ranking</a>
-            @if (auth()->user()->is_admin)
-                <a class="btn btn-secondary" href="{{ route('admin.dashboard') }}">Dashboard admin</a>
+            <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
+            <a class="btn btn-secondary" href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}">Ver ranking</a>
+            @if (auth()->user()->isLigaAdmin())
+                <a class="btn btn-secondary" href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}">Administrar liga</a>
             @endif
         </div>
     </section>
@@ -51,13 +51,13 @@
             </div>
 
             @forelse ($nextMatches as $match)
-                <article class="match-row lg:grid-cols-[1fr_auto] lg:items-center">
+                <article class="match-row lg:grid-cols-[1fr_13rem] lg:items-center">
                     <div class="team-line">
                         <span class="flag-chip">{!! $match->local?->flagEmojiHtml() !!}</span>
                         <span class="team-name">{{ $match->local->name ?? 'Local' }}</span>
-                        <span class="rounded-full bg-[var(--app-secondary)] px-2 py-1 text-xs font-black text-white">vs</span>
-                        <span class="team-name">{{ $match->visitante->name ?? 'Visitante' }}</span>
+                        <span class="mx-2 rounded-full bg-[var(--app-secondary)] px-2 py-1 text-xs font-black text-white">vs</span>
                         <span class="flag-chip">{!! $match->visitante?->flagEmojiHtml() !!}</span>
+                        <span class="team-name">{{ $match->visitante->name ?? 'Visitante' }}</span>
                     </div>
                     <div class="text-sm font-semibold leading-6 text-[var(--app-muted)] lg:text-right">
                         {{ \Carbon\Carbon::parse($match->fecha_utc)->format('d/m/Y H:i') }} UTC<br>

@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('equipos', function (Blueprint $table) {
-            $table->unsignedInteger('id')->primary(); 
+            $table->unsignedInteger('id')->primary();
             $table->string('name', 50);
             $table->string('code', 3)->nullable();
-            $table->char('grupo', 1); 
+            $table->char('grupo', 1);
             $table->timestamps();
         });
     }

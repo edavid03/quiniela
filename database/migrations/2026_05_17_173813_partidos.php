@@ -12,12 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('partidos', function (Blueprint $table) {
-            $table->id(); 
+            $table->id();
             $table->unsignedInteger('local_id');
             $table->unsignedInteger('visitante_id');
             $table->dateTime('fecha_utc');
             $table->string('estadio')->nullable();
-            $table->string('fase', 30)->default('Grupos'); 
+            $table->string('fase', 30)->default('Grupos');
             $table->integer('goles_local')->nullable();
             $table->integer('goles_visitante')->nullable();
             $table->timestamps();

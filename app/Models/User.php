@@ -3,16 +3,24 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Scopes\LigaScope;
+use App\Support\Tenancy;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use LogicException;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    public const ROLE_SUPERADMIN = 'superadmin';
+
+    public const ROLE_LIGA_ADMIN = 'liga_admin';
+
+    public const ROLE_LIGA_USER = 'liga_user';
 
     /**
      * The attributes that are mass assignable.
@@ -20,11 +28,12 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'liga_id',
         'name',
         'username',
         'email',
         'password',
-        'is_admin',
+        'role',
     ];
 
     /**
@@ -47,29 +56,39 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'is_admin' => 'boolean',
         ];
     }
 
     protected static function booted(): void
     {
-        static::saving(function (User $user): void {
-            if (! $user->is_admin) {
-                $user->admin_key = null;
+        static::addGlobalScope(new LigaScope);
 
-                return;
+        // Autocompleta liga_id desde la liga actual al crear usuarios de liga
+        // (p. ej. el import). El superadmin no pertenece a ninguna liga.
+        static::creating(function (User $user): void {
+            if ($user->liga_id === null && $user->role !== self::ROLE_SUPERADMIN) {
+                $user->liga_id = Tenancy::id();
             }
-
-            $adminExists = static::query()
-                ->where('is_admin', true)
-                ->when($user->exists, fn ($query) => $query->whereKeyNot($user->getKey()))
-                ->exists();
-
-            if ($adminExists) {
-                throw new LogicException('Solo puede existir un usuario administrador.');
-            }
-
-            $user->admin_key = 'admin';
         });
+    }
+
+    public function liga(): BelongsTo
+    {
+        return $this->belongsTo(Liga::class);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === self::ROLE_SUPERADMIN;
+    }
+
+    public function isLigaAdmin(): bool
+    {
+        return $this->role === self::ROLE_LIGA_ADMIN;
+    }
+
+    public function isLigaUser(): bool
+    {
+        return $this->role === self::ROLE_LIGA_USER;
     }
 }

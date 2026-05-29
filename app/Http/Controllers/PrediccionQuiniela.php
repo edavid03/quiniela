@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 class PrediccionQuiniela extends Controller
 {
-    function index()
+    public function index()
     {
         return view('prediccion-quiniela');
     }
 
-    function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'partido_id' => 'required|exists:partidos,id',
@@ -33,15 +33,13 @@ class PrediccionQuiniela extends Controller
         return response()->json(['message' => 'Predicción guardada correctamente']);
     }
 
-    function show($id)
+    public function show($id)
     {
         // Aquí puedes agregar la lógica para mostrar una predicción específica
         // Por ejemplo:
         // $prediccion = Prediccion::findOrFail($id);
         // return view('prediccion-detalle', compact('prediccion'));
 
-        return response()->json(['message' => 'Mostrar predicción con ID: ' . $id]);
+        return response()->json(['message' => 'Mostrar predicción con ID: '.$id]);
     }
-    
-
 }

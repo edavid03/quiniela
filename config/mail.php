@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact Inbox
+    |--------------------------------------------------------------------------
+    |
+    | Casilla a la que llegan los mensajes del formulario de contacto de la
+    | landing. Si no se define CONTACT_EMAIL, cae al remitente por defecto.
+    |
+    */
+
+    'contact_to' => env('CONTACT_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+
 ];

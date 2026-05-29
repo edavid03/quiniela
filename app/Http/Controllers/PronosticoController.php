@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Liga;
 use App\Models\Partido;
 use App\Models\Prediccion;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class PronosticoController extends Controller
 {
-    public function edit(Request $request): View
+    public function edit(Request $request, Liga $liga): View
     {
         $user = $request->user();
 
@@ -31,7 +31,7 @@ class PronosticoController extends Controller
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request, Liga $liga): RedirectResponse
     {
         $validated = $request->validate([
             'predicciones' => ['required', 'array'],
@@ -62,7 +62,7 @@ class PronosticoController extends Controller
 
         if ($pronosticosCompletos === []) {
             return redirect()
-                ->route('pronosticos.edit')
+                ->route('liga.pronosticos.edit', ['liga' => $liga])
                 ->with('status', 'No se realizaron cambios.');
         }
 
@@ -96,7 +96,7 @@ class PronosticoController extends Controller
         }
 
         return redirect()
-            ->route('pronosticos.edit')
+            ->route('liga.pronosticos.edit', ['liga' => $liga])
             ->with('status', 'Pronosticos guardados correctamente.');
     }
 }

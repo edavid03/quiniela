@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -13,58 +12,60 @@ class AuthTest extends TestCase
 
     public function test_login_screen_can_be_rendered(): void
     {
-        $this->get('/login')
+        $liga = $this->createLiga();
+
+        $this->get(route('liga.login', $liga))
             ->assertOk()
             ->assertSee('Usuario');
     }
 
     public function test_users_can_login_with_username_and_password(): void
     {
-        $user = User::factory()->create([
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga, [
             'username' => 'usuario_prueba',
             'password' => Hash::make('clave-segura'),
         ]);
 
-        $this->post('/login', [
+        $this->post(route('liga.login.store', $liga), [
             'username' => 'usuario_prueba',
             'password' => 'clave-segura',
-        ])->assertRedirect('/dashboard');
+        ])->assertRedirect(route('liga.dashboard', $liga));
 
         $this->assertAuthenticatedAs($user);
     }
 
     public function test_authenticated_users_can_view_dashboard(): void
     {
-        $user = User::factory()->create([
-            'username' => 'usuario_prueba',
-        ]);
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
 
         $this->actingAs($user)
-            ->get('/dashboard')
+            ->get(route('liga.dashboard', $liga))
             ->assertOk()
             ->assertSee('Mesa de la quiniela');
     }
 
-    public function test_admin_users_see_admin_dashboard_link(): void
+    public function test_liga_admin_users_see_admin_link(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
+        $liga = $this->createLiga();
+        $admin = $this->ligaAdmin($liga);
 
         $this->actingAs($admin)
-            ->get('/dashboard')
+            ->get(route('liga.dashboard', $liga))
             ->assertOk()
-            ->assertSee('Dashboard admin');
+            ->assertSee('Administrar liga');
     }
 
     public function test_users_cannot_login_with_invalid_password(): void
     {
-        User::factory()->create([
+        $liga = $this->createLiga();
+        $this->ligaUser($liga, [
             'username' => 'usuario_prueba',
             'password' => Hash::make('clave-segura'),
         ]);
 
-        $this->post('/login', [
+        $this->post(route('liga.login.store', $liga), [
             'username' => 'usuario_prueba',
             'password' => 'incorrecta',
         ])->assertSessionHasErrors('username');
@@ -74,11 +75,12 @@ class AuthTest extends TestCase
 
     public function test_users_can_logout(): void
     {
-        $user = User::factory()->create();
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
 
         $this->actingAs($user)
-            ->post('/logout')
-            ->assertRedirect('/login');
+            ->post(route('liga.logout', $liga))
+            ->assertRedirect(route('liga.login', $liga));
 
         $this->assertGuest();
     }

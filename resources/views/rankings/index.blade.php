@@ -8,7 +8,7 @@
             <h1 class="page-heading">Ranking</h1>
             <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Tabla de posiciones del grupo seg&uacute;n los puntos acumulados por los pron&oacute;sticos evaluados.</p>
         </div>
-        <a href="{{ route('dashboard') }}" class="btn btn-secondary sm:w-fit">Volver</a>
+        <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary sm:w-fit">Volver</a>
     </section>
 
     <section class="surface overflow-hidden">

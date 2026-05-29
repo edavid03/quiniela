@@ -10,8 +10,8 @@
             <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Consulta todos los partidos cargados y los marcadores oficiales cuando el administrador los registre.</p>
         </div>
         <div class="action-row">
-            <a href="{{ route('dashboard') }}" class="btn btn-secondary">Volver a mesa</a>
-            <a href="{{ route('rankings.index') }}" class="btn btn-primary">Ver ranking</a>
+            <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Volver a mesa</a>
+            <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-primary">Ver ranking</a>
         </div>
     </section>
 

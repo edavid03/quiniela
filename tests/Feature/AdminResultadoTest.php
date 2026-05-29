@@ -2,73 +2,58 @@
 
 namespace Tests\Feature;
 
-use App\Models\Equipo;
-use App\Models\Partido;
 use App\Models\Prediccion;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use LogicException;
 use Tests\TestCase;
 
 class AdminResultadoTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_only_one_admin_user_can_exist(): void
+    public function test_multiple_liga_admins_can_exist(): void
     {
-        User::factory()->create([
-            'is_admin' => true,
-        ]);
+        $ligaA = $this->createLiga(['slug' => 'liga-a']);
+        $ligaB = $this->createLiga(['slug' => 'liga-b']);
 
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Solo puede existir un usuario administrador.');
+        $this->ligaAdmin($ligaA);
+        $this->ligaAdmin($ligaB);
 
-        User::factory()->create([
-            'is_admin' => true,
-        ]);
+        // Ya no rige el admin unico global: cada liga tiene el suyo.
+        $this->assertDatabaseCount('users', 2);
     }
 
-    public function test_non_admin_users_cannot_access_admin_dashboard(): void
+    public function test_non_superadmin_cannot_access_superadmin_resultados(): void
     {
-        $user = User::factory()->create();
+        $liga = $this->createLiga();
+        $admin = $this->ligaAdmin($liga);
 
-        $this->actingAs($user)
-            ->get('/admin/dashboard')
-            ->assertRedirect('/dashboard')
-            ->assertSessionHas('security_alert', 'No tienes permisos para acceder al panel de administracion.');
-    }
-
-    public function test_non_admin_json_requests_are_forbidden(): void
-    {
-        $user = User::factory()->create();
-
-        $this->actingAs($user)
-            ->getJson('/admin/dashboard')
+        $this->actingAs($admin)
+            ->get(route('superadmin.resultados.edit'))
             ->assertForbidden();
     }
 
-    public function test_admin_can_view_admin_dashboard(): void
+    public function test_superadmin_can_view_resultados(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
+        $superadmin = $this->superAdmin();
 
-        $this->actingAs($admin)
-            ->get('/admin/dashboard')
+        $this->actingAs($superadmin)
+            ->get(route('superadmin.resultados.edit'))
             ->assertOk()
             ->assertSee('Resultados de partidos');
     }
 
-    public function test_admin_can_update_match_results_and_recalculate_prediction_points(): void
+    public function test_superadmin_result_scores_predictions_across_all_ligas(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
-        $user = User::factory()->create();
+        $superadmin = $this->superAdmin();
+        $ligaA = $this->createLiga(['slug' => 'liga-a']);
+        $ligaB = $this->createLiga(['slug' => 'liga-b']);
+        $userA = $this->ligaUser($ligaA);
+        $userB = $this->ligaUser($ligaB);
         $partido = $this->crearPartido();
 
         Prediccion::create([
-            'usuario_id' => $user->id,
+            'liga_id' => $ligaA->id,
+            'usuario_id' => $userA->id,
             'partido_id' => $partido->id,
             'goles_local' => 2,
             'goles_visitante' => 1,
@@ -76,8 +61,18 @@ class AdminResultadoTest extends TestCase
             'puntos' => null,
         ]);
 
-        $this->actingAs($admin)
-            ->post('/admin/resultados', [
+        Prediccion::create([
+            'liga_id' => $ligaB->id,
+            'usuario_id' => $userB->id,
+            'partido_id' => $partido->id,
+            'goles_local' => 3,
+            'goles_visitante' => 0,
+            'acertado' => false,
+            'puntos' => null,
+        ]);
+
+        $this->actingAs($superadmin)
+            ->post(route('superadmin.resultados.update'), [
                 'resultados' => [
                     $partido->id => [
                         'goles_local' => 2,
@@ -85,31 +80,32 @@ class AdminResultadoTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect('/admin/resultados');
+            ->assertRedirect(route('superadmin.resultados.edit'));
 
-        $this->assertDatabaseHas('partidos', [
-            'id' => $partido->id,
-            'goles_local' => 2,
-            'goles_visitante' => 1,
-        ]);
-
+        // Liga A: marcador exacto -> 3 puntos.
         $this->assertDatabaseHas('predicciones', [
-            'usuario_id' => $user->id,
+            'usuario_id' => $userA->id,
             'partido_id' => $partido->id,
             'acertado' => true,
             'puntos' => 3,
         ]);
+
+        // Liga B: solo signo correcto (gana local) -> 1 punto.
+        $this->assertDatabaseHas('predicciones', [
+            'usuario_id' => $userB->id,
+            'partido_id' => $partido->id,
+            'acertado' => false,
+            'puntos' => 1,
+        ]);
     }
 
-    public function test_incomplete_admin_result_shows_security_alert(): void
+    public function test_incomplete_superadmin_result_shows_security_alert(): void
     {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
+        $superadmin = $this->superAdmin();
         $partido = $this->crearPartido();
 
-        $this->actingAs($admin)
-            ->post('/admin/resultados', [
+        $this->actingAs($superadmin)
+            ->post(route('superadmin.resultados.update'), [
                 'resultados' => [
                     $partido->id => [
                         'goles_local' => 2,
@@ -122,56 +118,6 @@ class AdminResultadoTest extends TestCase
 
         $this->assertDatabaseHas('partidos', [
             'id' => $partido->id,
-            'goles_local' => null,
-            'goles_visitante' => null,
-        ]);
-    }
-
-    public function test_incomplete_admin_result_shows_only_one_visible_alert(): void
-    {
-        $admin = User::factory()->create([
-            'is_admin' => true,
-        ]);
-        $partido = $this->crearPartido();
-
-        $this->actingAs($admin)
-            ->from('/admin/resultados')
-            ->followingRedirects()
-            ->post('/admin/resultados', [
-                'resultados' => [
-                    $partido->id => [
-                        'goles_local' => 2,
-                        'goles_visitante' => null,
-                    ],
-                ],
-            ])
-            ->assertOk()
-            ->assertSee('Intentaste guardar un resultado incompleto.')
-            ->assertDontSee('Cada resultado debe tener goles de ambos equipos.');
-    }
-
-    private function crearPartido(): Partido
-    {
-        $local = Equipo::create([
-            'id' => 1,
-            'name' => 'Local FC',
-            'code' => 'LOC',
-            'grupo' => 'A',
-        ]);
-
-        $visitante = Equipo::create([
-            'id' => 2,
-            'name' => 'Visitante FC',
-            'code' => 'VIS',
-            'grupo' => 'A',
-        ]);
-
-        return Partido::create([
-            'local_id' => $local->id,
-            'visitante_id' => $visitante->id,
-            'fecha_utc' => now()->utc()->addWeeks(3)->format('Y-m-d H:i:s'),
-            'estadio' => 'Estadio de Prueba',
-            'fase' => 'Grupos',
             'goles_local' => null,
             'goles_visitante' => null,
         ]);

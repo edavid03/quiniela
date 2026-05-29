@@ -2,10 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\Equipo;
-use App\Models\Partido;
 use App\Models\Prediccion;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -15,13 +12,11 @@ class RankingTest extends TestCase
 
     public function test_authenticated_users_can_view_rankings(): void
     {
-        $user = User::factory()->create([
-            'name' => 'Ana',
-            'username' => 'ana',
-        ]);
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
 
         $this->actingAs($user)
-            ->get('/rankings')
+            ->get(route('liga.rankings.index', $liga))
             ->assertOk()
             ->assertSee('Ranking')
             ->assertSee('Ana');
@@ -29,27 +24,24 @@ class RankingTest extends TestCase
 
     public function test_dashboard_links_to_rankings(): void
     {
-        $user = User::factory()->create();
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
 
         $this->actingAs($user)
-            ->get('/dashboard')
+            ->get(route('liga.dashboard', $liga))
             ->assertOk()
             ->assertSee('Ver ranking');
     }
 
     public function test_rankings_are_ordered_by_points(): void
     {
+        $liga = $this->createLiga();
         $partido = $this->crearPartido();
-        $ana = User::factory()->create([
-            'name' => 'Ana',
-            'username' => 'ana',
-        ]);
-        $bruno = User::factory()->create([
-            'name' => 'Bruno',
-            'username' => 'bruno',
-        ]);
+        $ana = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
+        $bruno = $this->ligaUser($liga, ['name' => 'Bruno', 'username' => 'bruno']);
 
         Prediccion::create([
+            'liga_id' => $liga->id,
             'usuario_id' => $ana->id,
             'partido_id' => $partido->id,
             'goles_local' => 1,
@@ -59,6 +51,7 @@ class RankingTest extends TestCase
         ]);
 
         Prediccion::create([
+            'liga_id' => $liga->id,
             'usuario_id' => $bruno->id,
             'partido_id' => $partido->id,
             'goles_local' => 2,
@@ -68,35 +61,35 @@ class RankingTest extends TestCase
         ]);
 
         $this->actingAs($ana)
-            ->get('/rankings')
+            ->get(route('liga.rankings.index', $liga))
             ->assertOk()
             ->assertSeeInOrder(['Bruno', 'Ana']);
     }
 
-    private function crearPartido(): Partido
+    public function test_rankings_are_isolated_per_liga(): void
     {
-        $local = Equipo::create([
-            'id' => 1,
-            'name' => 'Local FC',
-            'code' => 'LOC',
-            'grupo' => 'A',
+        $ligaA = $this->createLiga(['name' => 'Liga A', 'slug' => 'liga-a']);
+        $ligaB = $this->createLiga(['name' => 'Liga B', 'slug' => 'liga-b']);
+        $partido = $this->crearPartido();
+
+        $ana = $this->ligaUser($ligaA, ['name' => 'Ana A', 'username' => 'ana']);
+        $beto = $this->ligaUser($ligaB, ['name' => 'Beto B', 'username' => 'beto']);
+
+        Prediccion::create([
+            'liga_id' => $ligaB->id,
+            'usuario_id' => $beto->id,
+            'partido_id' => $partido->id,
+            'goles_local' => 2,
+            'goles_visitante' => 0,
+            'acertado' => true,
+            'puntos' => 3,
         ]);
 
-        $visitante = Equipo::create([
-            'id' => 2,
-            'name' => 'Visitante FC',
-            'code' => 'VIS',
-            'grupo' => 'A',
-        ]);
-
-        return Partido::create([
-            'local_id' => $local->id,
-            'visitante_id' => $visitante->id,
-            'fecha_utc' => now()->utc()->addWeeks(3)->format('Y-m-d H:i:s'),
-            'estadio' => 'Estadio de Prueba',
-            'fase' => 'Grupos',
-            'goles_local' => null,
-            'goles_visitante' => null,
-        ]);
+        // El usuario de la liga A no ve a los de la liga B en su ranking.
+        $this->actingAs($ana)
+            ->get(route('liga.rankings.index', $ligaA))
+            ->assertOk()
+            ->assertSee('Ana A')
+            ->assertDontSee('Beto B');
     }
 }
