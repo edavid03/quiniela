@@ -14,6 +14,9 @@ FROM composer:2 AS vendor
 WORKDIR /app
 
 COPY composer.json composer.lock ./
+# El stage solo descarga dependencias. La imagen composer:2 trae un PHP mas
+# nuevo que el runtime (php:8.3), asi que se ignoran los platform reqs aca;
+# la plataforma real (stage app: PHP 8.3 + ext-gd) es la que valida.
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -21,7 +24,7 @@ RUN composer install \
     --prefer-dist \
     --optimize-autoloader \
     --no-scripts \
-    --ignore-platform-req=ext-gd
+    --ignore-platform-reqs
 
 FROM php:8.3-fpm-alpine AS app
 
