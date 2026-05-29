@@ -6,14 +6,14 @@
     <section class="mb-6">
         <span class="kicker">Administración · {{ $liga->name }}</span>
         <h1 class="page-heading mt-3">Previsualización</h1>
-        <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Revisá y corregí los datos. Las filas con errores en rojo se deben arreglar o quitar antes de enviar. Al confirmar, cada usuario recibe un correo con su invitación.</p>
+        <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Revisa y corrige los datos. Las filas con errores en rojo se deben arreglar o quitar antes de enviar. Al confirmar, cada usuario recibe un correo con su invitación.</p>
     </section>
 
     @php $totalErrores = collect($rows)->filter(fn ($r) => ! empty($r['errors']))->count(); @endphp
 
     @if ($totalErrores > 0)
         <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 font-bold text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30">
-            Hay {{ $totalErrores }} fila(s) con problemas. Corregilas o quitalas antes de confirmar.
+            Hay {{ $totalErrores }} fila(s) con problemas. Corrígelas o quítalas antes de confirmar.
         </div>
     @endif
 

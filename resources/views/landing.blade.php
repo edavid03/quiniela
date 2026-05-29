@@ -8,8 +8,8 @@
         <div class="app-shell relative grid gap-10 py-16 md:py-24 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
             <div>
                 <span class="inline-flex rounded-lg border border-current/20 bg-current/10 px-3 py-2 font-display text-[11px] font-black uppercase sm:text-xs">Quinielas privadas · #SOMOS26</span>
-                <h1 class="mt-6 font-display text-4xl font-black leading-[1.02] sm:text-6xl md:text-7xl">Armá tu quiniela del Mundial 2026</h1>
-                <p class="mt-5 max-w-xl text-base font-semibold leading-7 opacity-80 sm:text-lg">Tu propia liga privada con su admin, sus jugadores y su ranking. Vos cargás los resultados una vez y los puntos se reparten solos. Sin planillas, sin líos.</p>
+                <h1 class="mt-6 font-display text-4xl font-black leading-[1.02] sm:text-6xl md:text-7xl">Arma tu quiniela del Mundial 2026</h1>
+                <p class="mt-5 max-w-xl text-base font-semibold leading-7 opacity-80 sm:text-lg">Tu propia liga privada con su admin, sus jugadores y su ranking. Cargas los resultados una vez y los puntos se reparten solos. Sin planillas, sin complicaciones.</p>
 
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a href="#contacto" class="btn btn-primary">Quiero mi liga</a>
@@ -20,8 +20,8 @@
             <div class="grid gap-3">
                 @foreach ([
                     ['globe', 'El Mundial completo, ya cargado', '48 selecciones y 104 partidos listos para pronosticar.'],
-                    ['scale', 'Puntaje simple y justo', '3 puntos al marcador exacto, 1 punto si acertás el ganador.'],
-                    ['chart', 'Ranking en vivo', 'La tabla se reordena sola apenas cargás un resultado.'],
+                    ['scale', 'Puntaje simple y justo', '3 puntos al marcador exacto, 1 punto si aciertas el ganador.'],
+                    ['chart', 'Ranking en vivo', 'La tabla se reordena sola apenas cargas un resultado.'],
                 ] as [$icon, $title, $copy])
                     <div class="flex items-start gap-4 rounded-lg border border-current/15 bg-current/5 p-4 backdrop-blur-sm">
                         <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-current/10">
@@ -51,8 +51,8 @@
                     ['users', 'Ligas privadas', 'Cada grupo tiene su propia liga con su admin, sus jugadores y su ranking aislado del resto.'],
                     ['pencil', 'Pronósticos por partido', 'Cada jugador carga su marcador antes del cierre. Después ya no se puede tocar: cero trampas.'],
                     ['trophy', 'Ranking automático', '3 puntos por marcador exacto, 1 por acertar el ganador. La tabla se ordena sola.'],
-                    ['bolt', 'Resultados centralizados', 'Cargás el resultado oficial una sola vez y se puntúa a TODAS las ligas al instante.'],
-                    ['envelope', 'Invitaciones por mail', 'Subís un Excel con tus jugadores y el sistema les manda el acceso por correo.'],
+                    ['bolt', 'Resultados centralizados', 'Cargas el resultado oficial una sola vez y se puntúa a TODAS las ligas al instante.'],
+                    ['envelope', 'Invitaciones por mail', 'Subes un Excel con tus jugadores y el sistema les envía el acceso por correo.'],
                     ['clock', 'Cierre con plazo', 'Las apuestas se cierran una semana antes del primer partido. Parejo para todos.'],
                 ] as [$icon, $title, $copy])
                     <article class="surface-strong p-6">
@@ -77,9 +77,9 @@
 
             <div class="mt-10 grid gap-4 md:grid-cols-3">
                 @foreach ([
-                    ['1', 'Creamos tu liga', 'Nos contactás y armamos tu liga con su propio administrador y su dirección web.'],
-                    ['2', 'Invitás a tu gente', 'Cargás a tus jugadores desde un Excel y reciben la invitación por correo para activar su cuenta.'],
-                    ['3', 'A pronosticar', 'Cada uno carga sus marcadores, vos subís los resultados y el ranking se actualiza solo.'],
+                    ['1', 'Creamos tu liga', 'Nos contactas y armamos tu liga con su propio administrador y su dirección web.'],
+                    ['2', 'Invitas a tu gente', 'Cargas a tus jugadores desde un Excel y reciben la invitación por correo para activar su cuenta.'],
+                    ['3', 'A pronosticar', 'Cada uno carga sus marcadores, tú subes los resultados y el ranking se actualiza solo.'],
                 ] as [$n, $title, $copy])
                     <article class="stat-tile" data-mark="{{ $n }}">
                         <span class="relative z-10 grid h-10 w-10 place-items-center rounded-lg bg-[var(--app-primary)] font-display text-base font-black text-white dark:text-[#170f2f]">{{ $n }}</span>
@@ -96,8 +96,8 @@
         <div class="app-shell grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-start">
             <div>
                 <span class="kicker">Contacto</span>
-                <h2 class="page-heading mt-3 md:text-5xl">¿Querés tu liga?</h2>
-                <p class="mt-3 text-base font-semibold leading-7 text-[var(--app-muted)]">Dejanos tu mensaje y te ayudamos a armar la quiniela de tu grupo para el Mundial 2026.</p>
+                <h2 class="page-heading mt-3 md:text-5xl">¿Quieres tu liga?</h2>
+                <p class="mt-3 text-base font-semibold leading-7 text-[var(--app-muted)]">Déjanos tu mensaje y te ayudamos a armar la quiniela de tu grupo para el Mundial 2026.</p>
 
                 @php
                     $igRaw = config('contact.instagram');
@@ -158,7 +158,7 @@
 
                     <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="message">
                         Mensaje
-                        <textarea id="message" name="message" rows="4" required class="rounded-lg px-4 py-3" placeholder="Contanos de tu grupo">{{ old('message') }}</textarea>
+                        <textarea id="message" name="message" rows="4" required class="rounded-lg px-4 py-3" placeholder="Cuéntanos de tu grupo">{{ old('message') }}</textarea>
                     </label>
 
                     <button type="submit" class="btn btn-primary w-full">Enviar mensaje</button>

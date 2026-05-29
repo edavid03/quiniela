@@ -6,7 +6,7 @@
         <title>@yield('title', config('app.name', 'Quiniela').' · Quinielas privadas para tu grupo')</title>
         @php
             $ogTitle = config('app.name', 'Quiniela Mundial').' · Tu quiniela privada del Mundial 2026';
-            $ogDescription = 'Armá tu quiniela privada del Mundial 2026: ligas con su propio admin, pronósticos, ranking automático y resultados centralizados.';
+            $ogDescription = 'Arma tu quiniela privada del Mundial 2026: ligas con su propio admin, pronósticos, ranking automático y resultados centralizados.';
             $ogImage = asset('images/og-image.png');
         @endphp
         <meta name="description" content="{{ $ogDescription }}">
@@ -68,7 +68,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
                         </svg>
                     </button>
-                    <a href="#contacto" class="btn btn-primary">Contactanos</a>
+                    <a href="#contacto" class="btn btn-primary">Contáctanos</a>
                 </nav>
             </div>
         </header>
@@ -99,7 +99,7 @@
                             </span>
                             <span class="font-display text-base font-black">{{ config('app.name', 'Quiniela Mundial') }}</span>
                         </a>
-                        <p class="mt-4 max-w-xs text-sm font-semibold leading-6 opacity-70">Armá la quiniela privada de tu grupo para el Mundial 2026: pronósticos, ranking automático y resultados centralizados.</p>
+                        <p class="mt-4 max-w-xs text-sm font-semibold leading-6 opacity-70">Arma la quiniela privada de tu grupo para el Mundial 2026: pronósticos, ranking automático y resultados centralizados.</p>
 
                         <div class="mt-5 flex items-center gap-2">
                             @if ($igUrl)

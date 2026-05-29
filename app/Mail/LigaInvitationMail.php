@@ -23,7 +23,7 @@ class LigaInvitationMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "Activá tu cuenta en {$this->liga->name}",
+            subject: "Activa tu cuenta en {$this->liga->name}",
         );
     }
 

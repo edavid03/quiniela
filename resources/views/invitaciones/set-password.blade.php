@@ -6,8 +6,8 @@
     <section class="surface-strong w-full max-w-md p-6 sm:p-8">
         <div class="mb-6">
             <span class="kicker">{{ $liga->name }}</span>
-            <h1 class="mt-3 font-display text-2xl font-black leading-tight text-[var(--app-text)] sm:text-3xl">Activá tu cuenta</h1>
-            <p class="mt-2 font-semibold leading-6 text-[var(--app-muted)]">Elegí tu contraseña para entrar a la quiniela de <strong>{{ $liga->name }}</strong>.</p>
+            <h1 class="mt-3 font-display text-2xl font-black leading-tight text-[var(--app-text)] sm:text-3xl">Activa tu cuenta</h1>
+            <p class="mt-2 font-semibold leading-6 text-[var(--app-muted)]">Elige tu contraseña para entrar a la quiniela de <strong>{{ $liga->name }}</strong>.</p>
         </div>
 
         @if ($errors->any())

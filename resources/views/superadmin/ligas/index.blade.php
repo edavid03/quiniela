@@ -40,7 +40,7 @@
                 </div>
             </article>
         @empty
-            <div class="px-5 py-6 font-semibold text-[var(--app-muted)]">Todavía no hay ligas. Creá la primera.</div>
+            <div class="px-5 py-6 font-semibold text-[var(--app-muted)]">Todavía no hay ligas. Crea la primera.</div>
         @endforelse
     </section>
 @endsection

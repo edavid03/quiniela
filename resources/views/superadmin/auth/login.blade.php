@@ -7,7 +7,7 @@
         <div class="mb-6">
             <span class="kicker">Control central</span>
             <h1 class="mt-3 font-display text-2xl font-black leading-tight text-[var(--app-text)] sm:text-3xl">Panel Superadmin</h1>
-            <p class="mt-2 font-semibold leading-6 text-[var(--app-muted)]">Gestioná las ligas y cargá los resultados oficiales.</p>
+            <p class="mt-2 font-semibold leading-6 text-[var(--app-muted)]">Gestiona las ligas y carga los resultados oficiales.</p>
         </div>
 
         @if ($errors->any())
