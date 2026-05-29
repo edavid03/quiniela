@@ -1,0 +1,16 @@
+# Hybrid dev override (auto-applied by `docker compose`).
+#
+# Why: the corporate network blocks outbound traffic from inside containers
+# (DNS/egress capped), so building/running the PHP app image in Docker fails on
+# apk/npm/composer. The host DOES have internet, so we run the app on the host
+# and keep only MariaDB in Docker.
+#
+# This file just publishes MariaDB to the host so the local app reaches it at
+# 127.0.0.1:3306. Bring it up with:  docker compose up -d mariadb
+#
+# When container egress gets fixed, run the full all-in-docker dev stack with:
+#   docker compose -f docker-compose.yml -f docker-compose.dev-full.yml up -d
+services:
+  mariadb:
+    ports:
+      - "${DB_PORT:-3306}:3306"

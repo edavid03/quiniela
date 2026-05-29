@@ -1,0 +1,42 @@
+# Full all-in-docker dev stack — NOT auto-applied.
+#
+# Use this ONLY when container internet egress works (no corporate block):
+#   docker compose -f docker-compose.yml -f docker-compose.dev-full.yml up -d
+#
+# It mounts your source live, disables opcache, keeps vendor/node_modules in
+# named volumes, and runs a Vite dev server for HMR. App at localhost:8080,
+# Vite at localhost:5173.
+services:
+  app:
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+    volumes:
+      - .:/var/www/html
+      - quiniela-vendor:/var/www/html/vendor
+      - quiniela-storage:/var/www/html/storage
+      - ./docker/php/opcache.dev.ini:/usr/local/etc/php/conf.d/zz-opcache-dev.ini:ro
+
+  nginx:
+    volumes:
+      - .:/var/www/html
+      - quiniela-vendor:/var/www/html/vendor
+
+  vite:
+    image: node:22-alpine
+    container_name: quiniela-vite
+    working_dir: /var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "${VITE_PORT:-5173}:5173"
+    volumes:
+      - .:/var/www/html
+      - quiniela-node-modules:/var/www/html/node_modules
+    networks:
+      - quiniela
+
+volumes:
+  quiniela-vendor:
+    driver: local
+  quiniela-node-modules:
+    driver: local
