@@ -31,6 +31,39 @@ services:
     networks:
       - quiniela
 
+  worker:
+    build:
+      context: .
+      target: app
+    image: quiniela-app:latest
+    container_name: quiniela-worker
+    restart: unless-stopped
+    command: php artisan queue:work --tries=3 --max-time=3600 --sleep=3
+    env_file:
+      - .env
+    environment:
+      APP_ENV: "${APP_ENV:-production}"
+      APP_DEBUG: "${APP_DEBUG:-false}"
+      APP_URL: "${APP_URL}"
+      LOG_CHANNEL: "${LOG_CHANNEL:-stderr}"
+      DB_CONNECTION: mariadb
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: "${DB_DATABASE:-quiniela_app}"
+      DB_USERNAME: "${DB_APP_USERNAME:-quiniela}"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      CACHE_STORE: database
+      SESSION_DRIVER: database
+      QUEUE_CONNECTION: database
+      RUN_MIGRATIONS: "false"
+    volumes:
+      - quiniela-storage:/var/www/html/storage
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - quiniela
+
   nginx:
     build:
       context: .
