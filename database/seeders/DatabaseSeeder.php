@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 'liga_id' => null,
                 'name' => 'Super Admin',
                 'username' => 'superadmin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('omaracedo123'),
                 'role' => User::ROLE_SUPERADMIN,
             ]
         );

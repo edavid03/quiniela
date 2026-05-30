@@ -28,7 +28,7 @@ Tests run against **sqlite `:memory:`** (see `phpunit.xml`), independent of the 
 
 The scoring and deadline logic lives in the **models**, not the controllers — controllers only validate and delegate. Read these two before touching anything prediction-related:
 
-- **`Partido::fechaLimiteApuestasUtc()`** — the betting deadline is **one week before the earliest match** (`min(fecha_utc) - 1 week`). This single value gates ALL predictions globally; there is no per-match deadline.
+- **`Partido::fechaCierrePronosticosUtc()` / `Partido::admitePronosticos()`** — each match has its own betting deadline: `fecha_utc - 30 minutes`. A prediction is blocked when current UTC time is greater than or equal to that deadline.
 - **`Prediccion::registrarApuesta()`** — the only sanctioned way to create/update a bet. It re-checks the deadline server-side, returns a `string` error message on failure or the model on success (callers do `is_string($resultado)` to detect errors). It uses `updateOrCreate` keyed on `(partido_id, usuario_id)`, so a user has at most one prediction per match. Saving resets `puntos`/`acertado`.
 - **`Partido::finalizarPartido()`** → **`Prediccion::evaluarResultado()`** — the scoring engine. When an admin enters a result, the match computes the real "signo" (1 = local win, 2 = away win, 0 = draw) and each prediction is scored: **3 points for exact score, 1 point for correct signo, 0 otherwise**. `acertado` = exact-score hit.
 

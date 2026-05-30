@@ -31,15 +31,28 @@ class Partido extends Model
         return $this->hasMany(Prediccion::class);
     }
 
-    public static function fechaLimiteApuestasUtc(): ?Carbon
+    public function fechaCierrePronosticosUtc(): Carbon
     {
-        $primeraFecha = static::query()->min('fecha_utc');
+        return Carbon::parse($this->fecha_utc, 'UTC')->utc()->subMinutes(30);
+    }
 
-        if ($primeraFecha === null) {
+    public function admitePronosticos(): bool
+    {
+        return now()->utc()->lessThan($this->fechaCierrePronosticosUtc());
+    }
+
+    public static function proximoCierrePronosticosUtc(): ?Carbon
+    {
+        $proximoPartidoAbierto = static::query()
+            ->where('fecha_utc', '>', now()->utc()->addMinutes(30)->format('Y-m-d H:i:s'))
+            ->orderBy('fecha_utc')
+            ->first();
+
+        if ($proximoPartidoAbierto === null) {
             return null;
         }
 
-        return Carbon::parse($primeraFecha)->subWeek();
+        return $proximoPartidoAbierto->fechaCierrePronosticosUtc();
     }
 
     public function finalizarPartido(int $golesLocal, int $golesVisitante): void

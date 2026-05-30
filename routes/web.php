@@ -107,7 +107,7 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
                 'playerCount' => User::query()
                     ->where('role', User::ROLE_LIGA_USER)
                     ->count(),
-                'predictionDeadline' => Partido::fechaLimiteApuestasUtc(),
+                'predictionDeadline' => Partido::proximoCierrePronosticosUtc(),
                 'nextMatches' => Partido::query()
                     ->with(['local', 'visitante'])
                     ->orderBy('fecha_utc')

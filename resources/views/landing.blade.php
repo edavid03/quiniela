@@ -53,7 +53,7 @@
                     ['trophy', 'Ranking automático', '3 puntos por marcador exacto, 1 por acertar el ganador. La tabla se ordena sola.'],
                     ['bolt', 'Resultados centralizados', 'Cargas el resultado oficial una sola vez y se puntúa a TODAS las ligas al instante.'],
                     ['envelope', 'Invitaciones por mail', 'Subes un Excel con tus jugadores y el sistema les envía el acceso por correo.'],
-                    ['clock', 'Cierre con plazo', 'Las apuestas se cierran una semana antes del primer partido. Parejo para todos.'],
+                    ['clock', 'Cierre por partido', 'Cada pronostico se bloquea 30 minutos antes del inicio de su partido.'],
                 ] as [$icon, $title, $copy])
                     <article class="surface-strong p-6">
                         <span class="grid h-11 w-11 place-items-center rounded-lg bg-[var(--app-panel-soft)] text-[var(--app-primary)]">
