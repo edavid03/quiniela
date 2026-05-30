@@ -45,13 +45,13 @@
                             <span class="team-name">{{ $partido->visitante->name ?? 'Visitante' }}</span>
                         </div>
                         <div class="mt-2 text-sm leading-6 text-[var(--app-muted)]">
-                            {{ \Carbon\Carbon::parse($partido->fecha_utc)->format('d/m/Y H:i') }} UTC
+                            <x-local-time :date="$partido->fecha_utc" />
                             @if ($partido->estadio)
                                 Â· {{ $partido->estadio }}
                             @endif
                         </div>
                         <div class="mt-1 text-xs font-extrabold text-[var(--app-secondary)]">
-                            Pronostico abierto hasta {{ $cierrePronostico->format('d/m/Y H:i') }} UTC
+                            Pronostico abierto hasta <x-local-time :date="$cierrePronostico" />
                         </div>
                     </div>
 

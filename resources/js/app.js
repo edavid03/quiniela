@@ -25,6 +25,29 @@ document.addEventListener('click', (event) => {
     applyTheme(nextTheme);
 });
 
+const renderLocalTimes = () => {
+    const formatter = new Intl.DateTimeFormat(navigator.language || 'es', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        timeZoneName: 'short',
+    });
+
+    document.querySelectorAll('[data-local-time]').forEach((element) => {
+        const date = new Date(element.dataset.localTime);
+
+        if (Number.isNaN(date.getTime())) {
+            return;
+        }
+
+        element.textContent = formatter.format(date);
+    });
+};
+
+renderLocalTimes();
+
 // Evita el doble-submit: al loguearse o activar la cuenta el token CSRF rota,
 // y un segundo envio (doble toque, o el reintento de un webview in-app) llega
 // con el token viejo -> 419. Bloqueamos el reenvio y deshabilitamos el boton.
