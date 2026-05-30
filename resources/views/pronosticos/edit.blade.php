@@ -3,8 +3,6 @@
 @section('title', 'Pronosticos | '.config('app.name', 'Quiniela'))
 
 @section('content')
-    @php $hayPronosticosAbiertos = $partidos->contains(fn ($partido) => $partido->admitePronosticos()); @endphp
-
     <form method="POST" action="{{ route('liga.pronosticos.update', ['liga' => $currentLiga]) }}">
         @csrf
 
@@ -15,7 +13,7 @@
             </div>
             <div class="action-row">
                 <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Volver</a>
-                @if ($hayPronosticosAbiertos)
+                @if ($partidos->isNotEmpty())
                     <button class="btn btn-primary" type="submit">Guardar cambios</button>
                 @endif
             </div>
@@ -35,7 +33,6 @@
             @forelse ($partidos as $partido)
                 @php
                     $prediccion = $predicciones->get($partido->id);
-                    $pronosticoAbierto = $partido->admitePronosticos();
                     $cierrePronostico = $partido->fechaCierrePronosticosUtc();
                 @endphp
                 <article class="match-row last:border-b-0 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -53,23 +50,19 @@
                                 Â· {{ $partido->estadio }}
                             @endif
                         </div>
-                        <div class="mt-1 text-xs font-extrabold {{ $pronosticoAbierto ? 'text-[var(--app-secondary)]' : 'text-[var(--app-danger)]' }}">
-                            @if ($pronosticoAbierto)
-                                Pronostico abierto hasta {{ $cierrePronostico->format('d/m/Y H:i') }} UTC
-                            @else
-                                Pronostico cerrado
-                            @endif
+                        <div class="mt-1 text-xs font-extrabold text-[var(--app-secondary)]">
+                            Pronostico abierto hasta {{ $cierrePronostico->format('d/m/Y H:i') }} UTC
                         </div>
                     </div>
 
                     <div class="score-grid">
-                        <input name="predicciones[{{ $partido->id }}][goles_local]" type="number" min="0" max="99" value="{{ old("predicciones.{$partido->id}.goles_local", $prediccion->goles_local ?? '') }}" @disabled(! $pronosticoAbierto) class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)] disabled:cursor-not-allowed disabled:opacity-60">
+                        <input name="predicciones[{{ $partido->id }}][goles_local]" type="number" min="0" max="99" value="{{ old("predicciones.{$partido->id}.goles_local", $prediccion->goles_local ?? '') }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
                         <span class="text-center font-extrabold text-[var(--app-muted)]">-</span>
-                        <input name="predicciones[{{ $partido->id }}][goles_visitante]" type="number" min="0" max="99" value="{{ old("predicciones.{$partido->id}.goles_visitante", $prediccion->goles_visitante ?? '') }}" @disabled(! $pronosticoAbierto) class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)] disabled:cursor-not-allowed disabled:opacity-60">
+                        <input name="predicciones[{{ $partido->id }}][goles_visitante]" type="number" min="0" max="99" value="{{ old("predicciones.{$partido->id}.goles_visitante", $prediccion->goles_visitante ?? '') }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
                     </div>
                 </article>
             @empty
-                <div class="px-5 py-6 text-[var(--app-muted)]">Todav&iacute;a no hay partidos cargados.</div>
+                <div class="px-5 py-6 text-[var(--app-muted)]">No hay partidos disponibles para pronosticar.</div>
             @endforelse
         </section>
     </form>
