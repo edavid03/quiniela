@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Prediccion;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -152,9 +153,11 @@ class PronosticoTest extends TestCase
 
     public function test_pronosticos_after_deadline_are_rejected_with_security_alert(): void
     {
+        Carbon::setTestNow(Carbon::parse('2026-06-11 14:00:00', 'UTC'));
+
         $liga = $this->createLiga();
         $user = $this->ligaUser($liga);
-        $partido = $this->crearPartido(1, 2, now()->utc()->addDays(6)->format('Y-m-d H:i:s'));
+        $partido = $this->crearPartido(1, 2, now()->utc()->addMinutes(29)->format('Y-m-d H:i:s'));
 
         $this->actingAs($user)
             ->post(route('liga.pronosticos.update', $liga), [
@@ -166,9 +169,59 @@ class PronosticoTest extends TestCase
                 ],
             ])
             ->assertSessionHasErrors('predicciones')
-            ->assertSessionHas('security_alert', 'El plazo para registrar apuestas ha cerrado.');
+            ->assertSessionHas('security_alert', 'El plazo para registrar este pronostico ha cerrado.');
 
         $this->assertDatabaseCount('predicciones', 0);
+    }
+
+    public function test_pronosticos_exactly_thirty_minutes_before_match_are_rejected(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-06-11 14:00:00', 'UTC'));
+
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
+        $partido = $this->crearPartido(1, 2, now()->utc()->addMinutes(30)->format('Y-m-d H:i:s'));
+
+        $this->actingAs($user)
+            ->post(route('liga.pronosticos.update', $liga), [
+                'predicciones' => [
+                    $partido->id => [
+                        'goles_local' => 1,
+                        'goles_visitante' => 0,
+                    ],
+                ],
+            ])
+            ->assertSessionHasErrors('predicciones')
+            ->assertSessionHas('security_alert', 'El plazo para registrar este pronostico ha cerrado.');
+
+        $this->assertDatabaseCount('predicciones', 0);
+    }
+
+    public function test_pronosticos_more_than_thirty_minutes_before_match_are_allowed(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-06-11 14:00:00', 'UTC'));
+
+        $liga = $this->createLiga();
+        $user = $this->ligaUser($liga);
+        $partido = $this->crearPartido(1, 2, now()->utc()->addMinutes(31)->format('Y-m-d H:i:s'));
+
+        $this->actingAs($user)
+            ->post(route('liga.pronosticos.update', $liga), [
+                'predicciones' => [
+                    $partido->id => [
+                        'goles_local' => 1,
+                        'goles_visitante' => 0,
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('liga.pronosticos.edit', $liga));
+
+        $this->assertDatabaseHas('predicciones', [
+            'usuario_id' => $user->id,
+            'partido_id' => $partido->id,
+            'goles_local' => 1,
+            'goles_visitante' => 0,
+        ]);
     }
 
     public function test_liga_admin_cannot_view_pronosticos_form(): void

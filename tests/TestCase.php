@@ -7,6 +7,7 @@ use App\Models\Liga;
 use App\Models\Partido;
 use App\Models\User;
 use App\Support\Tenancy;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
@@ -18,6 +19,13 @@ abstract class TestCase extends BaseTestCase
         // En php-fpm cada request arranca con Tenancy en null; PHPUnit comparte
         // el proceso, asi que lo reseteamos para que no se filtre entre tests.
         Tenancy::forget();
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
     }
 
     protected function createLiga(array $attrs = []): Liga

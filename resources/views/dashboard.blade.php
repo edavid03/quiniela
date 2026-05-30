@@ -81,7 +81,7 @@
         <aside class="grid gap-5">
             {{-- INICIO CONTADOR REGRESIVO PRONOSTICOS: puedes editar o eliminar esta card completa. --}}
             <article class="stat-tile" data-mark="7">
-                <span class="text-sm font-black uppercase text-[var(--app-muted)]">Cierre de pronosticos</span>
+                <span class="text-sm font-black uppercase text-[var(--app-muted)]">Proximo cierre de pronosticos</span>
 
                 @if ($predictionDeadline)
                     <div
@@ -110,7 +110,7 @@
                         <p class="mt-2 text-xs font-extrabold text-[var(--app-secondary)]" data-countdown-status>Pronosticos abiertos</p>
                     </div>
                 @else
-                    <p class="relative z-10 mt-3 text-sm font-semibold leading-6 text-[var(--app-muted)]">Todavia no hay partidos cargados para calcular el cierre.</p>
+                    <p class="relative z-10 mt-3 text-sm font-semibold leading-6 text-[var(--app-muted)]">No hay partidos con pronosticos abiertos.</p>
                 @endif
             </article>
             {{-- FIN CONTADOR REGRESIVO PRONOSTICOS --}}
