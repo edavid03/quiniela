@@ -1,55 +1,93 @@
 @extends('layouts.app')
 
-@section('title', 'Importar usuarios | '.config('app.name', 'Quiniela'))
+@section('title', 'Agregar usuarios | '.config('app.name', 'Quiniela'))
 
 @section('content')
     <section class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-            <span class="kicker">Administración · {{ $liga->name }}</span>
-            <h1 class="page-heading mt-3">Importar usuarios</h1>
-            <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Sube un archivo <strong>.xlsx</strong> con las columnas <code>email</code>, <code>username</code> y <code>name</code> en la primera fila. La vista previa aparece sola y vas a poder revisar y editar antes de enviar las invitaciones.</p>
+            <span class="kicker">Administracion &middot; {{ $liga->name }}</span>
+            <h1 class="page-heading mt-3">Agregar usuarios</h1>
+            <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Crea un usuario manualmente y envia su invitacion. Si necesitas cargar varios, puedes apoyarte con un archivo Excel o CSV.</p>
             <p class="mt-2 text-sm font-extrabold text-[var(--app-secondary)]">
-                Cupos disponibles: {{ $usuariosDisponibles === null ? 'sin limite' : $usuariosDisponibles }}. El administrador cuenta dentro del limite.
+                Cupos disponibles: {{ $usuariosDisponibles === null ? 'sin limite' : $usuariosDisponibles }}.
             </p>
         </div>
-        <a href="{{ route('liga.admin.import.template', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Descargar plantilla</a>
+        <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary sm:w-fit">Volver</a>
     </section>
 
-    <form
-        method="POST"
-        action="{{ route('liga.admin.import.preview', ['liga' => $currentLiga]) }}"
-        enctype="multipart/form-data"
-        data-import-form
-    >
-        @csrf
+    @if ($errors->any())
+        <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 font-bold text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30">{{ $errors->first() }}</div>
+    @endif
 
-        <label
-            for="import-file"
-            data-dropzone
-            class="surface flex cursor-pointer flex-col items-center justify-center gap-3 border-2 border-dashed border-[var(--app-border)] px-6 py-12 text-center transition-colors duration-200 hover:border-[var(--app-primary)] hover:bg-[var(--app-panel-soft)]"
-        >
-            <span class="grid h-14 w-14 place-items-center rounded-xl bg-[var(--app-panel-soft)] text-[var(--app-primary)]">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-7 w-7" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V4.5m0 0L7.5 9m4.5-4.5L16.5 9" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3" />
-                </svg>
-            </span>
-            <span class="font-display text-base font-black text-[var(--app-text)]">
-                Arrastra tu archivo <span class="text-[var(--app-primary)]">.xlsx</span> o haz clic para elegirlo
-            </span>
-            <span class="text-sm font-semibold text-[var(--app-muted)]" data-file-name>Formatos: .xlsx, .xls o .csv · hasta 2 MB</span>
-        </label>
-
-        <input id="import-file" name="file" type="file" accept=".xlsx,.xls,.csv" required class="hidden">
-
-        {{-- Fallback sin JS: boton para previsualizar. JS lo oculta y previsualiza solo. --}}
-        <div class="action-row mt-5" data-fallback>
-            <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Volver</a>
-            <button type="submit" class="btn btn-primary">Previsualizar</button>
+    <section class="surface-strong p-5 sm:p-6">
+        <div class="mb-5">
+            <h2 class="font-display text-2xl font-black text-[var(--app-text)]">Agregar usuario manualmente</h2>
+            <p class="mt-2 text-sm font-semibold leading-6 text-[var(--app-muted)]">El usuario recibira un correo para activar su cuenta y elegir su contrasena.</p>
         </div>
-    </form>
 
-    {{-- Aca se inyecta el fragmento de filas (preview en vivo). --}}
+        <form method="POST" action="{{ route('liga.admin.import.accept', ['liga' => $currentLiga]) }}" class="grid gap-4 md:grid-cols-3">
+            @csrf
+
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="manual-name">
+                Nombre
+                <input id="manual-name" name="rows[0][name]" type="text" value="{{ old('rows.0.name') }}" required class="rounded-lg px-4 py-3 text-base" placeholder="Ana Perez">
+            </label>
+
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="manual-username">
+                Usuario
+                <input id="manual-username" name="rows[0][username]" type="text" value="{{ old('rows.0.username') }}" required class="rounded-lg px-4 py-3 text-base" placeholder="ana">
+            </label>
+
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="manual-email">
+                Email
+                <input id="manual-email" name="rows[0][email]" type="email" value="{{ old('rows.0.email') }}" required class="rounded-lg px-4 py-3 text-base" placeholder="ana@correo.com">
+            </label>
+
+            <div class="action-row md:col-span-3">
+                <button type="submit" class="btn btn-primary">Enviar invitacion</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="mt-6 surface p-5 sm:p-6">
+        <div class="mb-5">
+            <h2 class="font-display text-xl font-black text-[var(--app-text)]">Agregar varios con archivo</h2>
+            <p class="mt-2 text-sm font-semibold leading-6 text-[var(--app-muted)]">Sube un archivo <strong>.xlsx</strong>, <strong>.xls</strong> o <strong>.csv</strong> con columnas <code>email</code>, <code>username</code> y <code>name</code>. Podras revisar y editar la vista previa antes de confirmar.</p>
+        </div>
+
+        <form
+            method="POST"
+            action="{{ route('liga.admin.import.preview', ['liga' => $currentLiga]) }}"
+            enctype="multipart/form-data"
+            data-import-form
+        >
+            @csrf
+
+            <label
+                for="import-file"
+                data-dropzone
+                class="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-[var(--app-border)] px-6 py-10 text-center transition-colors duration-200 hover:border-[var(--app-primary)] hover:bg-[var(--app-panel-soft)]"
+            >
+                <span class="grid h-14 w-14 place-items-center rounded-xl bg-[var(--app-panel-soft)] text-[var(--app-primary)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="h-7 w-7" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V4.5m0 0L7.5 9m4.5-4.5L16.5 9" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15v3a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5v-3" />
+                    </svg>
+                </span>
+                <span class="font-display text-base font-black text-[var(--app-text)]">
+                    Arrastra tu archivo o haz clic para elegirlo
+                </span>
+                <span class="text-sm font-semibold text-[var(--app-muted)]" data-file-name>Formatos: .xlsx, .xls o .csv &middot; hasta 2 MB</span>
+            </label>
+
+            <input id="import-file" name="file" type="file" accept=".xlsx,.xls,.csv" required class="hidden">
+
+            <div class="action-row mt-5" data-fallback>
+                <button type="submit" class="btn btn-secondary">Previsualizar archivo</button>
+            </div>
+        </form>
+    </section>
+
     <div id="preview-results" class="mt-6"></div>
 
     <script>
@@ -67,7 +105,6 @@
             const token = form.querySelector('input[name="_token"]').value;
             const url = form.getAttribute('action');
 
-            // JS activo: la previsualizacion es automatica, ocultamos el boton.
             if (fallback) {
                 fallback.querySelector('button[type="submit"]')?.remove();
             }
@@ -154,7 +191,6 @@
                 }
             });
 
-            // Delegacion: el boton "Quitar" vive en filas inyectadas dinamicamente.
             results.addEventListener('click', (e) => {
                 const btn = e.target.closest('[data-remove-row]');
 
