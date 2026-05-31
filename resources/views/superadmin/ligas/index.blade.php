@@ -30,7 +30,7 @@
                     <strong class="block truncate">{{ $liga->name }}</strong>
                     <span class="text-sm text-[var(--app-muted)]">/{{ $liga->slug }} @unless ($liga->is_active) · <span class="text-[var(--app-danger)]">inactiva</span> @endunless</span>
                 </div>
-                <div class="text-right font-extrabold">Plan {{ $liga->plan_id }}</div>
+                <div class="text-right font-extrabold">Plan {{ $liga->plan_id }} - {{ $liga->plan?->name }}</div>
                 <div class="text-right font-extrabold">{{ $liga->users_count }} / {{ $liga->plan?->limite_usuarios ?? 'Sin limite' }}</div>
                 <div class="flex items-center justify-end gap-2">
                     <a href="{{ route('superadmin.ligas.edit', $liga) }}" class="btn btn-secondary">Editar</a>

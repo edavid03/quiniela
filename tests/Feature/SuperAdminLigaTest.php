@@ -54,6 +54,18 @@ class SuperAdminLigaTest extends TestCase
         ]);
     }
 
+    public function test_superadmin_create_liga_form_shows_plan_selector(): void
+    {
+        $su = $this->superAdmin();
+
+        $this->actingAs($su)
+            ->get(route('superadmin.ligas.create'))
+            ->assertOk()
+            ->assertSee('name="plan_id"', false)
+            ->assertSee('Plan A - Gratuito')
+            ->assertSee('Plan E - Sin limite');
+    }
+
     public function test_superadmin_cannot_change_liga_to_plan_below_current_users(): void
     {
         $su = $this->superAdmin();
