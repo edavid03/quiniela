@@ -7,6 +7,7 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LigaController;
 use App\Http\Controllers\LigaUserController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PronosticoController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ResultadoController;
@@ -87,6 +88,13 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'showLogin'])->name('login');
         Route::post('login', [AuthController::class, 'login'])->name('login.store');
+
+        Route::get('olvide-clave', [PasswordResetController::class, 'create'])->name('password.request');
+        Route::post('olvide-clave', [PasswordResetController::class, 'store'])
+            ->middleware('throttle:5,1')
+            ->name('password.email');
+        Route::get('recuperar-clave', [PasswordResetController::class, 'edit'])->name('password.reset');
+        Route::post('recuperar-clave', [PasswordResetController::class, 'update'])->name('password.update');
 
         Route::get('invitacion/{token}', [InvitationController::class, 'show'])->name('invitation.show');
         Route::post('invitacion/{token}', [InvitationController::class, 'accept'])->name('invitation.accept');
