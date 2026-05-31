@@ -40,6 +40,7 @@
                         <a href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.pronosticos.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Pronosticos</a>
                         <a href="{{ route('liga.resultados.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Resultados</a>
                         <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.rankings.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Ranking</a>
+                        <a href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.reglas.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Reglas</a>
                         @if (auth()->user()->isLigaAdmin())
                             <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.admin.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Admin</a>
                         @endif
@@ -67,13 +68,14 @@
             </header>
 
             <nav class="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--app-border)] bg-[var(--app-panel)]/94 px-2 pb-[calc(.75rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_50px_rgba(18,11,36,.14)] backdrop-blur-xl md:hidden" aria-label="Navegacion principal">
-                <div class="mx-auto grid max-w-md {{ auth()->user()->isLigaAdmin() ? 'grid-cols-5' : 'grid-cols-4' }} gap-1.5">
-                    <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-2 text-xs {{ request()->routeIs('liga.dashboard') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Mesa</a>
-                    <a href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-2 text-xs {{ request()->routeIs('liga.pronosticos.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Pronosticos</a>
-                    <a href="{{ route('liga.resultados.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[11px] {{ request()->routeIs('liga.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Resultados</a>
-                    <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-2 text-xs {{ request()->routeIs('liga.rankings.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Ranking</a>
+                <div class="mx-auto grid max-w-lg {{ auth()->user()->isLigaAdmin() ? 'grid-cols-6' : 'grid-cols-5' }} gap-1.5">
+                    <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.dashboard') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Mesa</a>
+                    <a href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.pronosticos.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Pron.</a>
+                    <a href="{{ route('liga.resultados.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Result.</a>
+                    <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.rankings.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Ranking</a>
+                    <a href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.reglas.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Reglas</a>
                     @if (auth()->user()->isLigaAdmin())
-                        <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-xs {{ request()->routeIs('liga.admin.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Admin</a>
+                        <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.admin.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Admin</a>
                     @endif
                 </div>
             </nav>

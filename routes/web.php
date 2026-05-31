@@ -126,6 +126,7 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
         Route::get('rankings', [RankingController::class, 'index'])->name('rankings.index');
         Route::get('resultados', [ResultadoController::class, 'index'])->name('resultados.index');
+        Route::view('reglas', 'reglas.index')->name('reglas.index');
         Route::get('pronosticos', [PronosticoController::class, 'edit'])->middleware('liga.player')->name('pronosticos.edit');
         Route::post('pronosticos', [PronosticoController::class, 'update'])->middleware('liga.player')->name('pronosticos.update');
 
