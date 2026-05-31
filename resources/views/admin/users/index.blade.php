@@ -5,21 +5,19 @@
 @section('content')
     <section class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-            <span class="kicker">Administración · {{ $liga->name }}</span>
+            <span class="kicker">Administracion &middot; {{ $liga->name }}</span>
             <h1 class="page-heading mt-3 md:text-5xl">Usuarios de la liga</h1>
-            <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Importa usuarios desde un Excel y se les envía una invitación por correo para activar su cuenta.</p>
+            <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Agrega usuarios manualmente y envia invitaciones por correo para activar sus cuentas.</p>
             <p class="mt-2 text-sm font-extrabold text-[var(--app-secondary)]">
-                
                 @if($liga->plan_id == 'E')
-                 Plan E, Sin limite de usuarios
+                    Plan E, sin limite de usuarios
                 @else
-                Plan {{ $liga->plan_id }}: {{ $users->count() }} / {{ $liga->limiteUsuarios() ?? 'sin limite' }} usuarios.
+                    Plan {{ $liga->plan_id }}: {{ $users->count() }} / {{ $liga->limiteUsuarios() ?? 'sin limite' }} usuarios.
                 @endif
             </p>
         </div>
         <div class="action-row sm:w-fit">
-            <a href="{{ route('liga.admin.import.template', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Descargar plantilla</a>
-            <a href="{{ route('liga.admin.import.create', ['liga' => $currentLiga]) }}" class="btn btn-primary">Importar Excel</a>
+            <a href="{{ route('liga.admin.import.create', ['liga' => $currentLiga]) }}" class="btn btn-primary">Agregar Usuarios</a>
         </div>
     </section>
 
@@ -41,7 +39,7 @@
             <article class="grid grid-cols-[1fr_6.5rem_8rem] items-center gap-3 border-t border-[var(--app-border)] px-5 py-4">
                 <div class="min-w-0">
                     <strong class="block truncate">{{ $user->name }}</strong>
-                    <span class="block truncate text-sm text-[var(--app-muted)]">{{ $user->username }} · {{ $user->email }} @if ($user->isLigaAdmin()) · <span class="font-black text-[var(--app-primary)]">admin</span> @endif</span>
+                    <span class="block truncate text-sm text-[var(--app-muted)]">{{ $user->username }} &middot; {{ $user->email }} @if ($user->isLigaAdmin()) &middot; <span class="font-black text-[var(--app-primary)]">admin</span> @endif</span>
                 </div>
 
                 <div class="flex justify-center">
@@ -56,7 +54,7 @@
                     @if ($user->isLigaAdmin())
                         <button type="button" disabled title="No se puede eliminar al administrador de la liga" class="btn btn-secondary w-full cursor-not-allowed opacity-45">Eliminar</button>
                     @else
-                        <form method="POST" action="{{ route('liga.admin.users.destroy', ['liga' => $currentLiga, 'user' => $user]) }}" class="w-full" onsubmit="return confirm('¿Eliminar a {{ $user->name }}?')">
+                        <form method="POST" action="{{ route('liga.admin.users.destroy', ['liga' => $currentLiga, 'user' => $user]) }}" class="w-full" onsubmit="return confirm('Eliminar a {{ $user->name }}?')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-secondary w-full text-[var(--app-danger)]">Eliminar</button>
@@ -65,7 +63,7 @@
                 </div>
             </article>
         @empty
-            <div class="px-5 py-6 font-semibold text-[var(--app-muted)]">Todavía no hay usuarios. Importa el primer lote.</div>
+            <div class="px-5 py-6 font-semibold text-[var(--app-muted)]">Todavia no hay usuarios. Agrega el primer usuario.</div>
         @endforelse
     </section>
 @endsection

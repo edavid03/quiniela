@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Maatwebsite\Excel\Facades\Excel;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ImportController extends Controller
 {
@@ -27,9 +25,17 @@ class ImportController extends Controller
         ]);
     }
 
-    public function template(): BinaryFileResponse
+    public function template()
     {
-        return Excel::download(new UsersTemplateExport, 'plantilla-usuarios.xlsx');
+        if (class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
+            return \Maatwebsite\Excel\Facades\Excel::download(new UsersTemplateExport, 'plantilla-usuarios.xlsx');
+        }
+
+        return response()->streamDownload(function () {
+            echo "email,username,name\n";
+        }, 'plantilla-usuarios.csv', [
+            'Content-Type' => 'text/csv',
+        ]);
     }
 
     public function preview(Request $request, Liga $liga): View
@@ -38,7 +44,7 @@ class ImportController extends Controller
             'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:2048'],
         ]);
 
-        $raw = Excel::toArray(new UsersImport, $request->file('file'))[0] ?? [];
+        $raw = $this->readRows($request->file('file'));
 
         $rows = [];
         $seenEmail = [];
@@ -187,5 +193,49 @@ class ImportController extends Controller
         return redirect()
             ->route('liga.admin.users.index', ['liga' => $liga])
             ->with('status', "Se invitaron {$created} usuarios. ({$skipped} omitidos por duplicado)");
+    }
+
+    private function readRows($file): array
+    {
+        $extension = mb_strtolower($file->getClientOriginalExtension());
+
+        if ($extension !== 'csv' && class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
+            return \Maatwebsite\Excel\Facades\Excel::toArray(new UsersImport, $file)[0] ?? [];
+        }
+
+        $handle = fopen($file->getRealPath(), 'r');
+
+        if ($handle === false) {
+            return [];
+        }
+
+        $headers = fgetcsv($handle);
+
+        if ($headers === false) {
+            fclose($handle);
+
+            return [];
+        }
+
+        $headers = array_map(
+            fn ($header) => mb_strtolower(trim((string) $header)),
+            $headers,
+        );
+
+        $rows = [];
+
+        while (($values = fgetcsv($handle)) !== false) {
+            $row = [];
+
+            foreach ($headers as $index => $header) {
+                $row[$header] = $values[$index] ?? null;
+            }
+
+            $rows[] = $row;
+        }
+
+        fclose($handle);
+
+        return $rows;
     }
 }

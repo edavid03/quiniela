@@ -40,6 +40,36 @@ class ImportTest extends TestCase
         Mail::assertQueued(LigaInvitationMail::class, 2);
     }
 
+    public function test_admin_users_page_shows_add_users_button_without_excel_buttons(): void
+    {
+        $liga = $this->createLiga();
+        $admin = $this->ligaAdmin($liga);
+
+        $this->actingAs($admin)
+            ->get(route('liga.admin.users.index', $liga))
+            ->assertOk()
+            ->assertSee('Agregar Usuarios')
+            ->assertDontSee('Descargar plantilla')
+            ->assertDontSee('Importar Excel');
+    }
+
+    public function test_add_users_page_has_manual_form_and_file_import_support(): void
+    {
+        $liga = $this->createLiga();
+        $admin = $this->ligaAdmin($liga);
+
+        $this->actingAs($admin)
+            ->get(route('liga.admin.import.create', $liga))
+            ->assertOk()
+            ->assertSee('Agregar usuario manualmente')
+            ->assertSee('name="rows[0][name]"', false)
+            ->assertSee('name="rows[0][username]"', false)
+            ->assertSee('name="rows[0][email]"', false)
+            ->assertSee('Agregar varios con archivo')
+            ->assertSee('name="file"', false)
+            ->assertDontSee('Descargar plantilla');
+    }
+
     public function test_accept_skips_existing_users(): void
     {
         Mail::fake();
@@ -148,7 +178,9 @@ class ImportTest extends TestCase
         $this->actingAs($admin)
             ->get(route('liga.admin.import.template', $liga))
             ->assertOk()
-            ->assertDownload('plantilla-usuarios.xlsx');
+            ->assertDownload(class_exists(\Maatwebsite\Excel\Facades\Excel::class)
+                ? 'plantilla-usuarios.xlsx'
+                : 'plantilla-usuarios.csv');
     }
 
     public function test_non_admin_cannot_access_import(): void
