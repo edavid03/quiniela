@@ -66,14 +66,13 @@ class RankingTest extends TestCase
             ->assertSeeInOrder(['Bruno', 'Ana']);
     }
 
-    public function test_liga_admin_is_excluded_from_rankings(): void
+    public function test_liga_admin_is_included_in_rankings(): void
     {
         $liga = $this->createLiga();
         $partido = $this->crearPartido();
         $ana = $this->ligaUser($liga, ['name' => 'Ana Jugadora', 'username' => 'ana']);
         $organizadora = $this->ligaAdmin($liga, ['name' => 'Zoraida Organizadora', 'username' => 'admin']);
 
-        // El admin tiene puntos en la BD, pero no debe figurar en la tabla.
         Prediccion::create([
             'liga_id' => $liga->id,
             'usuario_id' => $organizadora->id,
@@ -88,7 +87,8 @@ class RankingTest extends TestCase
             ->get(route('liga.rankings.index', $liga))
             ->assertOk()
             ->assertSee('Ana Jugadora')
-            ->assertDontSee('Zoraida Organizadora');
+            ->assertSee('Zoraida Organizadora')
+            ->assertSeeInOrder(['Zoraida Organizadora', 'Ana Jugadora']);
     }
 
     public function test_rankings_are_isolated_per_liga(): void

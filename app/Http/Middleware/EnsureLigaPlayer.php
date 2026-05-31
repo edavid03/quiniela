@@ -13,15 +13,14 @@ class EnsureLigaPlayer
     {
         $user = $request->user();
 
-        // Solo los jugadores pronostican: el admin organiza la liga, no compite.
-        if ($user === null || ! $user->isLigaUser()) {
+        if ($user === null || (! $user->isLigaUser() && ! $user->isLigaAdmin())) {
             if ($request->expectsJson()) {
                 abort(403);
             }
 
             return redirect()
                 ->route('liga.dashboard', ['liga' => Tenancy::liga()])
-                ->with('security_alert', 'Los administradores organizan la liga; no participan en los pronosticos.');
+                ->with('security_alert', 'No tienes permisos para registrar pronosticos en esta liga.');
         }
 
         return $next($request);
