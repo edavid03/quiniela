@@ -33,6 +33,17 @@
                 <input id="slug" name="slug" type="text" value="{{ old('slug') }}" required class="rounded-lg px-4 py-3" placeholder="liga-adn" pattern="[a-z0-9-]+">
                 <span class="text-xs font-semibold text-[var(--app-muted)]">Solo minúsculas, números y guiones.</span>
             </label>
+            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="plan_id">
+                Plan
+                <select id="plan_id" name="plan_id" required class="rounded-lg px-4 py-3">
+                    @foreach ($planes as $plan)
+                        <option value="{{ $plan->id }}" @selected(old('plan_id', \App\Models\Plan::PLAN_A) === $plan->id)>
+                            Plan {{ $plan->id }} - {{ $plan->name }} ({{ $plan->limite_usuarios === null ? 'sin limite' : $plan->limite_usuarios.' usuarios' }})
+                        </option>
+                    @endforeach
+                </select>
+                <span class="text-xs font-semibold text-[var(--app-muted)]">El administrador cuenta dentro del limite del plan.</span>
+            </label>
         </section>
 
         <section class="surface grid gap-5 p-5">

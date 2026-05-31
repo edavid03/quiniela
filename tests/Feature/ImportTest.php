@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Mail\LigaInvitationMail;
+use App\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
@@ -58,6 +59,52 @@ class ImportTest extends TestCase
 
         Mail::assertQueued(LigaInvitationMail::class, 1);
         $this->assertDatabaseHas('users', ['email' => 'carlos@correo.test']);
+    }
+
+    public function test_accept_blocks_imports_that_exceed_plan_limit(): void
+    {
+        Mail::fake();
+
+        $liga = $this->createLiga(['plan_id' => Plan::PLAN_A]);
+        $admin = $this->ligaAdmin($liga);
+
+        $this->actingAs($admin)
+            ->post(route('liga.admin.import.accept', $liga), [
+                'rows' => [
+                    ['email' => 'u1@correo.test', 'username' => 'u1', 'name' => 'Usuario 1'],
+                    ['email' => 'u2@correo.test', 'username' => 'u2', 'name' => 'Usuario 2'],
+                    ['email' => 'u3@correo.test', 'username' => 'u3', 'name' => 'Usuario 3'],
+                    ['email' => 'u4@correo.test', 'username' => 'u4', 'name' => 'Usuario 4'],
+                    ['email' => 'u5@correo.test', 'username' => 'u5', 'name' => 'Usuario 5'],
+                ],
+            ])
+            ->assertSessionHasErrors('rows')
+            ->assertSessionHas('security_alert', 'La importacion excede el limite de usuarios del plan de la liga.');
+
+        $this->assertDatabaseCount('users', 1);
+        Mail::assertNothingQueued();
+    }
+
+    public function test_accept_allows_imports_up_to_plan_limit_counting_admin(): void
+    {
+        Mail::fake();
+
+        $liga = $this->createLiga(['plan_id' => Plan::PLAN_A]);
+        $admin = $this->ligaAdmin($liga);
+
+        $this->actingAs($admin)
+            ->post(route('liga.admin.import.accept', $liga), [
+                'rows' => [
+                    ['email' => 'u1@correo.test', 'username' => 'u1', 'name' => 'Usuario 1'],
+                    ['email' => 'u2@correo.test', 'username' => 'u2', 'name' => 'Usuario 2'],
+                    ['email' => 'u3@correo.test', 'username' => 'u3', 'name' => 'Usuario 3'],
+                    ['email' => 'u4@correo.test', 'username' => 'u4', 'name' => 'Usuario 4'],
+                ],
+            ])
+            ->assertRedirect(route('liga.admin.users.index', $liga));
+
+        $this->assertDatabaseCount('users', 5);
+        Mail::assertQueued(LigaInvitationMail::class, 4);
     }
 
     public function test_preview_flags_invalid_rows(): void

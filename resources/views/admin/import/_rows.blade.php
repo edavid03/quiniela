@@ -7,6 +7,11 @@
     <div class="surface px-5 py-6 font-semibold text-[var(--app-muted)]">El archivo no tiene filas válidas. Revisa que tenga las columnas <code>email</code>, <code>username</code> y <code>name</code> en la primera fila.</div>
 @else
     <div class="mb-4 flex flex-wrap items-center gap-2.5">
+        @isset($usuariosDisponibles)
+            <span class="inline-flex items-center gap-2 rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-soft)] px-3 py-2 text-sm font-extrabold text-[var(--app-muted)]">
+                Cupos disponibles: {{ $usuariosDisponibles === null ? 'sin limite' : $usuariosDisponibles }}
+            </span>
+        @endisset
         <span class="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-extrabold text-[var(--app-success)] dark:border-emerald-900/50 dark:bg-emerald-950/30">
             <x-icon name="check" class="h-4 w-4" /> {{ $totalValidas }} {{ $totalValidas === 1 ? 'fila válida' : 'filas válidas' }}
         </span>

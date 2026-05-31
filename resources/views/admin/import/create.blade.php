@@ -8,6 +8,9 @@
             <span class="kicker">Administración · {{ $liga->name }}</span>
             <h1 class="page-heading mt-3">Importar usuarios</h1>
             <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Sube un archivo <strong>.xlsx</strong> con las columnas <code>email</code>, <code>username</code> y <code>name</code> en la primera fila. La vista previa aparece sola y vas a poder revisar y editar antes de enviar las invitaciones.</p>
+            <p class="mt-2 text-sm font-extrabold text-[var(--app-secondary)]">
+                Cupos disponibles: {{ $usuariosDisponibles === null ? 'sin limite' : $usuariosDisponibles }}. El administrador cuenta dentro del limite.
+            </p>
         </div>
         <a href="{{ route('liga.admin.import.template', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Descargar plantilla</a>
     </section>

@@ -21,7 +21,10 @@ class ImportController extends Controller
 {
     public function create(Liga $liga): View
     {
-        return view('admin.import.create', ['liga' => $liga]);
+        return view('admin.import.create', [
+            'liga' => $liga,
+            'usuariosDisponibles' => $liga->usuariosDisponibles(),
+        ]);
     }
 
     public function template(): BinaryFileResponse
@@ -40,6 +43,8 @@ class ImportController extends Controller
         $rows = [];
         $seenEmail = [];
         $seenUsername = [];
+        $usuariosDisponibles = $liga->usuariosDisponibles();
+        $usuariosNuevosValidos = 0;
 
         foreach ($raw as $r) {
             $email = trim((string) ($r['email'] ?? ''));
@@ -82,6 +87,14 @@ class ImportController extends Controller
                 $errors[] = 'Username ya existe en la liga';
             }
 
+            if ($errors === []) {
+                if ($usuariosDisponibles !== null && $usuariosNuevosValidos >= $usuariosDisponibles) {
+                    $errors[] = 'Excede el limite de usuarios del plan';
+                } else {
+                    $usuariosNuevosValidos++;
+                }
+            }
+
             $rows[] = [
                 'email' => $email,
                 'username' => $username,
@@ -97,6 +110,7 @@ class ImportController extends Controller
         return view($view, [
             'liga' => $liga,
             'rows' => $rows,
+            'usuariosDisponibles' => $usuariosDisponibles,
         ]);
     }
 
@@ -111,6 +125,27 @@ class ImportController extends Controller
 
         $created = 0;
         $skipped = 0;
+        $usuariosNuevos = 0;
+
+        foreach ($validated['rows'] as $row) {
+            $email = trim($row['email']);
+            $username = trim($row['username']);
+
+            $exists = User::query()
+                ->where(fn ($q) => $q->where('email', $email)->orWhere('username', $username))
+                ->exists();
+
+            if (! $exists) {
+                $usuariosNuevos++;
+            }
+        }
+
+        if (! $liga->permiteAgregarUsuarios($usuariosNuevos)) {
+            return back()
+                ->withErrors(['rows' => 'La importacion excede el limite de usuarios del plan de la liga.'])
+                ->with('security_alert', 'La importacion excede el limite de usuarios del plan de la liga.')
+                ->withInput();
+        }
 
         foreach ($validated['rows'] as $row) {
             $email = trim($row['email']);

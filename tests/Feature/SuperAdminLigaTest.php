@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Invitation;
+use App\Models\Plan;
 use App\Models\Prediccion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -39,14 +40,43 @@ class SuperAdminLigaTest extends TestCase
                 'admin_username' => 'admin',
                 'admin_email' => 'admin@adn.test',
                 'admin_password' => 'password123',
+                'plan_id' => Plan::PLAN_B,
             ])
             ->assertRedirect(route('superadmin.ligas.index'));
 
-        $this->assertDatabaseHas('ligas', ['slug' => 'liga-adn']);
+        $this->assertDatabaseHas('ligas', [
+            'slug' => 'liga-adn',
+            'plan_id' => Plan::PLAN_B,
+        ]);
         $this->assertDatabaseHas('users', [
             'email' => 'admin@adn.test',
             'role' => 'liga_admin',
         ]);
+    }
+
+    public function test_superadmin_cannot_change_liga_to_plan_below_current_users(): void
+    {
+        $su = $this->superAdmin();
+        $liga = $this->createLiga(['plan_id' => Plan::PLAN_E]);
+        $this->ligaAdmin($liga);
+
+        foreach (range(1, 5) as $i) {
+            $this->ligaUser($liga, [
+                'email' => "user{$i}@correo.test",
+                'username' => "user{$i}",
+            ]);
+        }
+
+        $this->actingAs($su)
+            ->put(route('superadmin.ligas.update', $liga), [
+                'name' => $liga->name,
+                'slug' => $liga->slug,
+                'is_active' => '1',
+                'plan_id' => Plan::PLAN_A,
+            ])
+            ->assertSessionHasErrors('plan_id');
+
+        $this->assertSame(Plan::PLAN_E, $liga->refresh()->plan_id);
     }
 
     public function test_reserved_slug_is_rejected(): void

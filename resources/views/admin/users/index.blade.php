@@ -8,6 +8,9 @@
             <span class="kicker">Administración · {{ $liga->name }}</span>
             <h1 class="page-heading mt-3 md:text-5xl">Usuarios de la liga</h1>
             <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Importa usuarios desde un Excel y se les envía una invitación por correo para activar su cuenta.</p>
+            <p class="mt-2 text-sm font-extrabold text-[var(--app-secondary)]">
+                Plan {{ $liga->plan_id }}: {{ $users->count() }} / {{ $liga->limiteUsuarios() ?? 'sin limite' }} usuarios. El administrador cuenta dentro del limite.
+            </p>
         </div>
         <div class="action-row sm:w-fit">
             <a href="{{ route('liga.admin.import.template', ['liga' => $currentLiga]) }}" class="btn btn-secondary">Descargar plantilla</a>
