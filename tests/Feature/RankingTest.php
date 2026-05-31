@@ -66,6 +66,74 @@ class RankingTest extends TestCase
             ->assertSeeInOrder(['Bruno', 'Ana']);
     }
 
+    public function test_rankings_tiebreak_by_exact_scores(): void
+    {
+        $liga = $this->createLiga();
+        $ana = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
+        $bruno = $this->ligaUser($liga, ['name' => 'Bruno', 'username' => 'bruno']);
+
+        $this->createPrediccion($liga, $ana, $this->crearPartido(1, 2), 1);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(3, 4), 1);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(5, 6), 1);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(7, 8), 3, true);
+
+        $this->actingAs($ana)
+            ->get(route('liga.rankings.index', $liga))
+            ->assertOk()
+            ->assertSeeInOrder(['Bruno', 'Ana']);
+    }
+
+    public function test_rankings_tiebreak_by_sign_hits(): void
+    {
+        $liga = $this->createLiga();
+        $ana = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
+        $bruno = $this->ligaUser($liga, ['name' => 'Bruno', 'username' => 'bruno']);
+
+        $this->createPrediccion($liga, $ana, $this->crearPartido(1, 2), 1);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(3, 4), 0);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(5, 6), 0);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(7, 8), 1);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(9, 10), 1);
+
+        $this->actingAs($ana)
+            ->get(route('liga.rankings.index', $liga))
+            ->assertOk()
+            ->assertSeeInOrder(['Bruno', 'Ana']);
+    }
+
+    public function test_rankings_tiebreak_by_fewer_misses(): void
+    {
+        $liga = $this->createLiga();
+        $ana = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
+        $bruno = $this->ligaUser($liga, ['name' => 'Bruno', 'username' => 'bruno']);
+
+        $this->createPrediccion($liga, $ana, $this->crearPartido(1, 2), 1);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(3, 4), 0);
+        $this->createPrediccion($liga, $ana, $this->crearPartido(5, 6), 0);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(7, 8), 1);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(9, 10), 0);
+
+        $this->actingAs($ana)
+            ->get(route('liga.rankings.index', $liga))
+            ->assertOk()
+            ->assertSeeInOrder(['Bruno', 'Ana']);
+    }
+
+    public function test_rankings_use_name_as_final_tiebreaker(): void
+    {
+        $liga = $this->createLiga();
+        $ana = $this->ligaUser($liga, ['name' => 'Ana', 'username' => 'ana']);
+        $bruno = $this->ligaUser($liga, ['name' => 'Bruno', 'username' => 'bruno']);
+
+        $this->createPrediccion($liga, $ana, $this->crearPartido(1, 2), 1);
+        $this->createPrediccion($liga, $bruno, $this->crearPartido(3, 4), 1);
+
+        $this->actingAs($bruno)
+            ->get(route('liga.rankings.index', $liga))
+            ->assertOk()
+            ->assertSeeInOrder(['Ana', 'Bruno']);
+    }
+
     public function test_liga_admin_is_included_in_rankings(): void
     {
         $liga = $this->createLiga();
@@ -116,5 +184,18 @@ class RankingTest extends TestCase
             ->assertOk()
             ->assertSee('Ana A')
             ->assertDontSee('Beto B');
+    }
+
+    private function createPrediccion($liga, $user, $partido, int $puntos, bool $acertado = false): Prediccion
+    {
+        return Prediccion::create([
+            'liga_id' => $liga->id,
+            'usuario_id' => $user->id,
+            'partido_id' => $partido->id,
+            'goles_local' => 1,
+            'goles_visitante' => 0,
+            'acertado' => $acertado,
+            'puntos' => $puntos,
+        ]);
     }
 }

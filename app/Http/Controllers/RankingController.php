@@ -18,12 +18,16 @@ class RankingController extends Controller
                 'users.username',
                 DB::raw('COALESCE(SUM(predicciones.puntos), 0) as total_puntos'),
                 DB::raw('COUNT(predicciones.id) as pronosticos'),
-                DB::raw('SUM(CASE WHEN predicciones.puntos IS NOT NULL THEN 1 ELSE 0 END) as evaluados'),
-                DB::raw('SUM(CASE WHEN predicciones.acertado = 1 THEN 1 ELSE 0 END) as exactos'),
+                DB::raw('COALESCE(SUM(CASE WHEN predicciones.puntos IS NOT NULL THEN 1 ELSE 0 END), 0) as evaluados'),
+                DB::raw('COALESCE(SUM(CASE WHEN predicciones.acertado = 1 THEN 1 ELSE 0 END), 0) as exactos'),
+                DB::raw('COALESCE(SUM(CASE WHEN predicciones.puntos = 1 THEN 1 ELSE 0 END), 0) as aciertos_signo'),
+                DB::raw('COALESCE(SUM(CASE WHEN predicciones.puntos = 0 THEN 1 ELSE 0 END), 0) as fallos'),
             ])
             ->groupBy('users.id', 'users.name', 'users.username')
             ->orderByDesc('total_puntos')
             ->orderByDesc('exactos')
+            ->orderByDesc('aciertos_signo')
+            ->orderBy('fallos')
             ->orderByDesc('evaluados')
             ->orderBy('users.name')
             ->get();
