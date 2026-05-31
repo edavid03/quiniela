@@ -295,18 +295,18 @@ class PronosticoTest extends TestCase
         $this->assertDatabaseCount('predicciones', 0);
     }
 
-    public function test_liga_admin_cannot_view_pronosticos_form(): void
+    public function test_liga_admin_can_view_pronosticos_form(): void
     {
         $liga = $this->createLiga();
         $admin = $this->ligaAdmin($liga);
 
         $this->actingAs($admin)
             ->get(route('liga.pronosticos.edit', $liga))
-            ->assertRedirect(route('liga.dashboard', $liga))
-            ->assertSessionHas('security_alert');
+            ->assertOk()
+            ->assertSee('Mis pron&oacute;sticos', false);
     }
 
-    public function test_liga_admin_cannot_submit_pronosticos(): void
+    public function test_liga_admin_can_submit_pronosticos(): void
     {
         $liga = $this->createLiga();
         $admin = $this->ligaAdmin($liga);
@@ -321,10 +321,15 @@ class PronosticoTest extends TestCase
                     ],
                 ],
             ])
-            ->assertRedirect(route('liga.dashboard', $liga))
-            ->assertSessionHas('security_alert');
+            ->assertRedirect(route('liga.pronosticos.edit', $liga));
 
-        $this->assertDatabaseCount('predicciones', 0);
+        $this->assertDatabaseHas('predicciones', [
+            'usuario_id' => $admin->id,
+            'partido_id' => $partido->id,
+            'liga_id' => $liga->id,
+            'goles_local' => 2,
+            'goles_visitante' => 1,
+        ]);
     }
 
     public function test_users_can_view_pronosticos_form_with_existing_values(): void
