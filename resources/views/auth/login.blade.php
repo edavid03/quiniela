@@ -70,7 +70,7 @@
                                 <input name="remember" type="checkbox" value="1" class="h-4 w-4 accent-[var(--fwc-red)]">
                                 Recordarme
                             </label>
-                            <span class="rounded-lg bg-[var(--app-panel-soft)] px-3 py-2 text-xs font-black uppercase text-[var(--app-muted)]">FWC26</span>
+                            <a href="{{ route('liga.password.request', ['liga' => $liga]) }}" class="text-sm font-extrabold text-[var(--app-primary)] underline-offset-4 hover:underline">Olvid&eacute; mi contrase&ntilde;a</a>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-full">

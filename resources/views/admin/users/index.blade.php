@@ -9,7 +9,12 @@
             <h1 class="page-heading mt-3 md:text-5xl">Usuarios de la liga</h1>
             <p class="mt-2 max-w-2xl leading-7 text-[var(--app-muted)]">Importa usuarios desde un Excel y se les envía una invitación por correo para activar su cuenta.</p>
             <p class="mt-2 text-sm font-extrabold text-[var(--app-secondary)]">
-                Plan {{ $liga->plan_id }}: {{ $users->count() }} / {{ $liga->limiteUsuarios() ?? 'sin limite' }} usuarios. El administrador cuenta dentro del limite.
+                
+                @if($liga->plan_id == 'E')
+                 Plan E, Sin limite de usuarios
+                @else
+                Plan {{ $liga->plan_id }}: {{ $users->count() }} / {{ $liga->limiteUsuarios() ?? 'sin limite' }} usuarios.
+                @endif
             </p>
         </div>
         <div class="action-row sm:w-fit">
