@@ -17,19 +17,21 @@
     @endif
 
     <section class="surface overflow-hidden">
-        <div class="grid grid-cols-[1fr_auto_auto] gap-3 bg-[var(--app-panel-soft)] px-5 py-3 text-sm font-extrabold text-[var(--app-muted)]">
+        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-3 bg-[var(--app-panel-soft)] px-5 py-3 text-sm font-extrabold text-[var(--app-muted)]">
             <div>Liga</div>
+            <div class="text-right">Plan</div>
             <div class="text-right">Usuarios</div>
             <div class="text-right">Acciones</div>
         </div>
 
         @forelse ($ligas as $liga)
-            <article class="grid grid-cols-[1fr_auto_auto] items-center gap-3 border-t border-[var(--app-border)] px-5 py-4">
+            <article class="grid grid-cols-[1fr_auto_auto_auto] items-center gap-3 border-t border-[var(--app-border)] px-5 py-4">
                 <div class="min-w-0">
                     <strong class="block truncate">{{ $liga->name }}</strong>
                     <span class="text-sm text-[var(--app-muted)]">/{{ $liga->slug }} @unless ($liga->is_active) · <span class="text-[var(--app-danger)]">inactiva</span> @endunless</span>
                 </div>
-                <div class="text-right font-extrabold">{{ $liga->users_count }}</div>
+                <div class="text-right font-extrabold">Plan {{ $liga->plan_id }} - {{ $liga->plan?->name }}</div>
+                <div class="text-right font-extrabold">{{ $liga->users_count }} / {{ $liga->plan?->limite_usuarios ?? 'Sin limite' }}</div>
                 <div class="flex items-center justify-end gap-2">
                     <a href="{{ route('superadmin.ligas.edit', $liga) }}" class="btn btn-secondary">Editar</a>
                     <form method="POST" action="{{ route('superadmin.ligas.destroy', $liga) }}" onsubmit="return confirm('¿Eliminar la liga {{ $liga->name }} y todos sus usuarios?')">

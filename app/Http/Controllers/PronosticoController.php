@@ -17,6 +17,7 @@ class PronosticoController extends Controller
 
         $partidos = Partido::query()
             ->with(['local', 'visitante'])
+            ->conPronosticosAbiertos()
             ->orderBy('fecha_utc')
             ->get();
 
@@ -67,16 +68,27 @@ class PronosticoController extends Controller
         }
 
         $partidoIds = array_map('intval', array_keys($pronosticosCompletos));
-        $partidosExistentes = Partido::query()
+        $partidos = Partido::query()
             ->whereIn('id', $partidoIds)
-            ->pluck('id')
-            ->all();
+            ->get()
+            ->keyBy('id');
 
-        if (count($partidosExistentes) !== count($partidoIds)) {
+        if ($partidos->count() !== count($partidoIds)) {
             return back()
                 ->withErrors(['predicciones' => 'Uno de los partidos seleccionados no existe.'])
                 ->with('security_alert', 'Se detecto un partido invalido en el formulario.')
                 ->withInput();
+        }
+
+        foreach ($partidoIds as $partidoId) {
+            if (! $partidos->get($partidoId)->admitePronosticos()) {
+                $mensaje = 'El plazo para registrar este pronostico ha cerrado.';
+
+                return back()
+                    ->withErrors(['predicciones' => $mensaje])
+                    ->with('security_alert', $mensaje)
+                    ->withInput();
+            }
         }
 
         foreach ($pronosticosCompletos as $partidoId => $pronostico) {

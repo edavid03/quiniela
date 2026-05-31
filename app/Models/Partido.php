@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Scopes\LigaScope;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Partido extends Model
@@ -41,10 +42,15 @@ class Partido extends Model
         return now()->utc()->lessThan($this->fechaCierrePronosticosUtc());
     }
 
+    public function scopeConPronosticosAbiertos(Builder $query): Builder
+    {
+        return $query->where('fecha_utc', '>', now()->utc()->addMinutes(30)->format('Y-m-d H:i:s'));
+    }
+
     public static function proximoCierrePronosticosUtc(): ?Carbon
     {
         $proximoPartidoAbierto = static::query()
-            ->where('fecha_utc', '>', now()->utc()->addMinutes(30)->format('Y-m-d H:i:s'))
+            ->conPronosticosAbiertos()
             ->orderBy('fecha_utc')
             ->first();
 

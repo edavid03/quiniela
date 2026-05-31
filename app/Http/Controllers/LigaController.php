@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use App\Models\Liga;
+use App\Models\Plan;
 use App\Models\Prediccion;
 use App\Models\Scopes\LigaScope;
 use App\Models\User;
@@ -20,6 +21,7 @@ class LigaController extends Controller
         return view('superadmin.ligas.index', [
             'ligas' => Liga::query()
                 ->withCount('users')
+                ->with('plan')
                 ->orderBy('name')
                 ->get(),
         ]);
@@ -27,7 +29,9 @@ class LigaController extends Controller
 
     public function create(): View
     {
-        return view('superadmin.ligas.create');
+        return view('superadmin.ligas.create', [
+            'planes' => Plan::query()->orderBy('id')->get(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -38,6 +42,7 @@ class LigaController extends Controller
             $liga = Liga::create([
                 'name' => $data['name'],
                 'slug' => $data['slug'],
+                'plan_id' => $data['plan_id'],
                 'is_active' => true,
             ]);
 
@@ -59,7 +64,10 @@ class LigaController extends Controller
 
     public function edit(Liga $liga): View
     {
-        return view('superadmin.ligas.edit', ['liga' => $liga]);
+        return view('superadmin.ligas.edit', [
+            'liga' => $liga,
+            'planes' => Plan::query()->orderBy('id')->get(),
+        ]);
     }
 
     public function update(Request $request, Liga $liga): RedirectResponse
@@ -71,8 +79,17 @@ class LigaController extends Controller
                 Rule::notIn(Liga::RESERVED_SLUGS),
                 Rule::unique('ligas', 'slug')->ignore($liga->id),
             ],
+            'plan_id' => ['required', Rule::exists('planes', 'id')],
             'is_active' => ['required', 'boolean'],
         ]);
+
+        $plan = Plan::findOrFail($data['plan_id']);
+
+        if ($plan->limite_usuarios !== null && $liga->usuariosActuales() > $plan->limite_usuarios) {
+            return back()
+                ->withErrors(['plan_id' => 'La liga tiene mas usuarios que los permitidos por el plan seleccionado.'])
+                ->withInput();
+        }
 
         $liga->update($data);
 
@@ -109,17 +126,22 @@ class LigaController extends Controller
      */
     private function validateLiga(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'slug' => [
                 'required', 'string', 'max:255', 'lowercase', 'regex:/^[a-z0-9-]+$/',
                 Rule::notIn(Liga::RESERVED_SLUGS),
                 Rule::unique('ligas', 'slug'),
             ],
+            'plan_id' => ['nullable', Rule::exists('planes', 'id')],
             'admin_name' => ['required', 'string', 'max:255'],
             'admin_username' => ['required', 'string', 'max:255'],
             'admin_email' => ['required', 'string', 'email', 'max:255'],
             'admin_password' => ['required', 'string', 'min:8'],
         ]);
+
+        $data['plan_id'] ??= Plan::PLAN_A;
+
+        return $data;
     }
 }

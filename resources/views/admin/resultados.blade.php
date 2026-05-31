@@ -41,7 +41,7 @@
                             <span class="team-name">{{ $partido->visitante->name ?? 'Visitante' }}</span>
                         </div>
                         <div class="mt-2 text-sm leading-6 text-[var(--app-muted)]">
-                            {{ \Carbon\Carbon::parse($partido->fecha_utc)->format('d/m/Y H:i') }} UTC
+                            <x-local-time :date="$partido->fecha_utc" />
                             @if ($partido->estadio)
                                 · {{ $partido->estadio }}
                             @endif
