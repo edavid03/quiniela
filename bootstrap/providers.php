@@ -1,6 +1,11 @@
 <?php
 
-return [
+$providers = [
     App\Providers\AppServiceProvider::class,
-    App\Providers\TelescopeServiceProvider::class,
 ];
+
+if (class_exists('Laravel\\Telescope\\TelescopeApplicationServiceProvider')) {
+    $providers[] = App\Providers\TelescopeServiceProvider::class;
+}
+
+return $providers;
