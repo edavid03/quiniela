@@ -23,6 +23,7 @@ cp .env.production.example .env
 APP_URL=https://tu-dominio.com
 DB_PASSWORD=una_clave_segura
 DB_ROOT_PASSWORD=otra_clave_segura
+SUPERADMIN_PASSWORD=una_clave_segura_para_superadmin
 ```
 
 4. Genera una clave de aplicacion:
@@ -60,6 +61,14 @@ Crear el enlace de storage manualmente:
 ```bash
 docker compose exec app php artisan storage:link --force
 ```
+
+Sembrar/refrescar las cuentas demo (liga demo + `admin`/`jugador` con clave `Quiniela2026`, y `superadmin` con la clave de `SUPERADMIN_PASSWORD`):
+
+```bash
+docker compose exec app php artisan db:seed --class=DemoSeeder --force
+```
+
+`DemoSeeder` es idempotente (solo `updateOrCreate`) y NO toca partidos/equipos/pronosticos, asi que es seguro re-correrlo. En cambio, NUNCA corras `db:seed` sin `--class`: el `DatabaseSeeder` completo invoca `Mundial2026Seeder`, que borra todos los partidos y equipos. Para automatizarlo en el deploy, setea `RUN_SEED=true` (el entrypoint corre solo `DemoSeeder`); luego puedes volver a `false`.
 
 Detener la aplicacion:
 

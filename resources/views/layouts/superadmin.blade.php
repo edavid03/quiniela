@@ -37,6 +37,9 @@
                     <nav class="flex flex-wrap items-center gap-2 text-sm">
                         <a href="{{ route('superadmin.ligas.index') }}" class="btn btn-secondary {{ request()->routeIs('superadmin.ligas.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Ligas</a>
                         <a href="{{ route('superadmin.resultados.edit') }}" class="btn btn-secondary {{ request()->routeIs('superadmin.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Resultados</a>
+                        @if (Route::has('telescope'))
+                            <a href="{{ route('telescope') }}" target="_blank" rel="noopener" class="btn btn-secondary">Telescope</a>
+                        @endif
                         <form method="POST" action="{{ route('superadmin.logout') }}">
                             @csrf
                             <button type="submit" class="btn btn-secondary">Salir</button>

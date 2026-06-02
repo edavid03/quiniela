@@ -25,6 +25,12 @@ if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   php artisan migrate --force --no-interaction
 fi
 
+# Seed opcional de cuentas demo. Solo DemoSeeder (idempotente, no destructivo);
+# NUNCA el DatabaseSeeder completo, que borraria partidos/equipos.
+if [ "${RUN_SEED:-false}" = "true" ]; then
+  php artisan db:seed --class=DemoSeeder --force --no-interaction
+fi
+
 if [ "${APP_ENV:-production}" = "production" ]; then
   php artisan optimize:clear --no-interaction
   php artisan optimize --no-interaction
