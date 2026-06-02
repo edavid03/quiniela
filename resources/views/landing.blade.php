@@ -9,7 +9,7 @@
             <div>
                 <span class="inline-flex rounded-lg border border-current/20 bg-current/10 px-3 py-2 font-display text-[11px] font-black uppercase sm:text-xs">Quinielas privadas · #SOMOS26</span>
                 <h1 class="mt-6 font-display text-4xl font-black leading-[1.02] sm:text-6xl md:text-7xl">Arma tu quiniela del Mundial 2026</h1>
-                <p class="mt-5 max-w-xl text-base font-semibold leading-7 opacity-80 sm:text-lg">Tu propia liga privada con su admin, sus jugadores y su ranking. Cargas los resultados una vez y los puntos se reparten solos. Sin planillas, sin complicaciones.</p>
+                <p class="mt-5 max-w-xl text-base font-semibold leading-7 opacity-80 sm:text-lg">Tu propia liga privada con su admin, sus jugadores y su ranking. Puntuación atumatica. Sin planillas, sin complicaciones.</p>
 
                 <div class="mt-8 flex flex-wrap gap-3">
                     <a href="#contacto" class="btn btn-primary">Quiero mi liga</a>
@@ -21,7 +21,7 @@
                 @foreach ([
                     ['globe', 'El Mundial completo, ya cargado', '48 selecciones y 104 partidos listos para pronosticar.'],
                     ['scale', 'Puntaje simple y justo', '3 puntos al marcador exacto, 1 punto si aciertas el ganador.'],
-                    ['chart', 'Ranking en vivo', 'La tabla se reordena sola apenas cargas un resultado.'],
+                    ['chart', 'Ranking en vivo', 'La tabla se reordena sola automaticamente.'],
                 ] as [$icon, $title, $copy])
                     <div class="flex items-start gap-4 rounded-lg border border-current/15 bg-current/5 p-4 backdrop-blur-sm">
                         <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg bg-current/10">
