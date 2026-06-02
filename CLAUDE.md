@@ -50,7 +50,7 @@ The `/dashboard` route closure builds its own view data inline (counts + next 5 
 ## Conventions specific to this repo
 
 - Controllers return Blade `View`/`RedirectResponse`; flash messages use `status` for success and **`security_alert`** for blocked/suspicious actions (invalid match id, incomplete bet, closed deadline). The bulk update controllers (`PronosticoController`, `AdminPartidoResultadoController`) validate the FULL submitted array, reject if any referenced `partido` id doesn't exist, and skip rows where both goal fields are null. Preserve this all-or-nothing validation shape.
-- Seed data (teams + 2026 fixtures) comes from `Mundial2026Seeder`; `DatabaseSeeder` also creates the `admin` test user (`admin` / `password`, `is_admin = true`).
+- Seed data (teams + 2026 fixtures) comes from `Mundial2026Seeder` (DESTRUCTIVE — deletes `partidos`/`equipos`, never run it on a populated prod DB). Demo accounts live in the idempotent `DemoSeeder`: liga demo + `admin` / `Quiniela2026` (`role` = liga_admin), `jugador` / `Quiniela2026`, and `superadmin` (password from `SUPERADMIN_PASSWORD` env, dev fallback only). `DatabaseSeeder` just calls both. On deploy, `RUN_SEED=true` runs ONLY `DemoSeeder` (see `docker/php/entrypoint.sh`).
 - Times are stored/compared in **UTC** (`fecha_utc`, `now()->utc()`).
 
 ## Project-wide rules (from global config)
