@@ -15,7 +15,27 @@ class Partido extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'local_id', 'visitante_id', 'fecha_utc', 'estadio', 'fase', 'goles_local', 'goles_visitante'];
+    protected $fillable = ['id', 'local_id', 'visitante_id', 'fecha_utc', 'fecha_caracas', 'estadio', 'fase', 'goles_local', 'goles_visitante'];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Partido $partido): void {
+            if ($partido->fecha_utc === null) {
+                $partido->fecha_caracas = null;
+
+                return;
+            }
+
+            $partido->fecha_caracas = self::fechaCaracasDesdeUtc($partido->fecha_utc);
+        });
+    }
+
+    public static function fechaCaracasDesdeUtc(mixed $fechaUtc): string
+    {
+        return Carbon::parse($fechaUtc, 'UTC')
+            ->setTimezone('America/Caracas')
+            ->format('Y-m-d H:i:s');
+    }
 
     public function local()
     {
