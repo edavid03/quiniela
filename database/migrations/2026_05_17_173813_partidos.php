@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('local_id');
             $table->unsignedInteger('visitante_id');
             $table->dateTime('fecha_utc');
+            $table->dateTime('fecha_caracas')->nullable()->after('fecha_utc');
             $table->string('estadio')->nullable();
             $table->string('fase', 30)->default('Grupos');
             $table->integer('goles_local')->nullable();

@@ -104,19 +104,24 @@ class Mundial2026Seeder extends Seeder
     }
 
     /**
-     * @return list<array{local_id: int, visitante_id: int, fecha_utc: string, estadio: string, fase: string}>
+     * @return list<array{local_id: int, visitante_id: int, fecha_utc: string, fecha_caracas: string, estadio: string, fase: string}>
      */
     private function partidosFaseGrupos(): array
     {
-        $f = fn (int $local, int $visitante, string $fechaEt, string $estadio) => [
-            'local_id' => $local,
-            'visitante_id' => $visitante,
-            'fecha_utc' => $this->etToUtc($fechaEt),
-            'estadio' => $estadio,
-            'fase' => 'Grupos',
-            'goles_local' => null,
-            'goles_visitante' => null,
-        ];
+        $f = function (int $local, int $visitante, string $fechaEt, string $estadio): array {
+            $fechaUtc = $this->etToUtc($fechaEt);
+
+            return [
+                'local_id' => $local,
+                'visitante_id' => $visitante,
+                'fecha_utc' => $fechaUtc,
+                'fecha_caracas' => $this->utcToCaracas($fechaUtc),
+                'estadio' => $estadio,
+                'fase' => 'Grupos',
+                'goles_local' => null,
+                'goles_visitante' => null,
+            ];
+        };
 
         return [
             // Grupo A
@@ -211,6 +216,13 @@ class Mundial2026Seeder extends Seeder
     {
         return Carbon::parse($fechaEt, 'America/New_York')
             ->utc()
+            ->format('Y-m-d H:i:s');
+    }
+
+    private function utcToCaracas(string $fechaUtc): string
+    {
+        return Carbon::parse($fechaUtc, 'UTC')
+            ->setTimezone('America/Caracas')
             ->format('Y-m-d H:i:s');
     }
 }
