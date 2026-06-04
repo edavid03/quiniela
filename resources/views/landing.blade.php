@@ -91,8 +91,55 @@
         </div>
     </section>
 
+    {{-- DEMO --}}
+    <section id="demo" class="scroll-mt-24 bg-[var(--app-bg)] py-16 md:py-20">
+        <div class="app-shell grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-center">
+            <div>
+                <span class="kicker">Probala ahora</span>
+                <h2 class="page-heading mt-3 md:text-5xl">Entrá a la demo sin registrarte</h2>
+                <p class="mt-3 text-base font-semibold leading-7 text-[var(--app-muted)]">Una liga de ejemplo con el Mundial 2026 ya cargado: pronósticos, cierre por partido y ranking en vivo. Entrá como jugador y mirá cómo se siente competir antes de armar la tuya.</p>
+
+                <ul class="mt-6 grid gap-3">
+                    @foreach ([
+                        ['pencil', 'Cargá tus marcadores partido por partido.'],
+                        ['trophy', 'Mirá cómo suma el ranking en tiempo real.'],
+                        ['clock', 'Probá el cierre 30 minutos antes de cada partido.'],
+                    ] as [$icon, $copy])
+                        <li class="flex items-center gap-3 text-sm font-semibold text-[var(--app-text)]">
+                            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-[var(--app-panel-soft)] text-[var(--app-secondary)]">
+                                <x-icon :name="$icon" class="h-5 w-5" />
+                            </span>
+                            {{ $copy }}
+                        </li>
+                    @endforeach
+                </ul>
+
+                <a href="{{ route('liga.login', ['liga' => 'demo']) }}" class="btn btn-primary mt-8">Entrar a la demo</a>
+            </div>
+
+            <div class="surface-strong p-6 sm:p-8">
+                <span class="kicker">Credenciales de jugador</span>
+                <p class="mt-3 text-sm font-semibold leading-6 text-[var(--app-muted)]">Usá estos datos en la pantalla de acceso de la liga demo.</p>
+
+                <div class="mt-5 grid gap-3">
+                    @foreach ([
+                        ['Usuario', 'jugador'],
+                        ['Contraseña', 'Quiniela2026'],
+                    ] as [$label, $value])
+                        <div class="flex items-center justify-between gap-4 rounded-lg bg-[var(--app-panel-soft)] px-4 py-3">
+                            <span class="text-xs font-black uppercase tracking-wide text-[var(--app-muted)]">{{ $label }}</span>
+                            <code class="font-display text-base font-black text-[var(--app-text)]">{{ $value }}</code>
+                        </div>
+                    @endforeach
+                </div>
+
+                <a href="{{ route('liga.login', ['liga' => 'demo']) }}" class="btn btn-secondary mt-6 w-full">Ir al acceso de la demo</a>
+            </div>
+        </div>
+    </section>
+
     {{-- CONTACTO --}}
-    <section id="contacto" class="scroll-mt-24 bg-[var(--app-bg)] py-16 md:py-20">
+    <section id="contacto" class="scroll-mt-24 bg-[var(--app-panel)] py-16 md:py-20">
         <div class="app-shell grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-start">
             <div>
                 <span class="kicker">Contacto</span>
@@ -136,8 +183,11 @@
                     <div class="alert mb-5 border-red-200 bg-red-50 text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30">{{ $errors->first() }}</div>
                 @endif
 
-                <form method="POST" action="{{ route('contacto.send') }}" class="grid gap-5">
+                <form method="POST" action="{{ route('contacto.send') }}" class="grid gap-5" data-contact-form>
                     @csrf
+
+                    {{-- Feedback inline para el envio via fetch (sin recargar la pagina). --}}
+                    <div data-contact-feedback class="hidden" role="status" aria-live="polite"></div>
 
                     {{-- Honeypot anti-bot: oculto para humanos --}}
                     <div class="hidden" aria-hidden="true">
