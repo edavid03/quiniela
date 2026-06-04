@@ -25,15 +25,9 @@
         <form method="POST" action="{{ route('liga.invitation.accept', ['liga' => $liga, 'token' => $token]) }}" class="grid gap-5">
             @csrf
 
-            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password">
-                Contraseña
-                <input id="password" name="password" type="password" required autofocus autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
-            </label>
+            <x-password-input name="password" label="Contraseña" autocomplete="new-password" :required="true" autofocus />
 
-            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password_confirmation">
-                Repetir contraseña
-                <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
-            </label>
+            <x-password-input name="password_confirmation" label="Repetir contraseña" autocomplete="new-password" :required="true" />
 
             <button type="submit" class="btn btn-primary w-full">Activar y entrar</button>
         </form>

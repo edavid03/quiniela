@@ -25,6 +25,29 @@ document.addEventListener('click', (event) => {
     applyTheme(nextTheme);
 });
 
+// Ojito de los campos de contrasena: alterna entre password/text y los iconos.
+// Delegado en document para que aplique a cualquier <x-password-input> sin init por pagina.
+document.addEventListener('click', (event) => {
+    const toggle = event.target.closest('[data-password-toggle]');
+
+    if (! toggle) {
+        return;
+    }
+
+    const field = toggle.closest('[data-password-field]');
+    const input = field?.querySelector('[data-password-input]');
+
+    if (! input) {
+        return;
+    }
+
+    const willShow = input.type === 'password';
+    input.type = willShow ? 'text' : 'password';
+    toggle.setAttribute('aria-label', willShow ? 'Ocultar contrasena' : 'Mostrar contrasena');
+    toggle.querySelector('[data-eye-show]')?.classList.toggle('hidden', willShow);
+    toggle.querySelector('[data-eye-hide]')?.classList.toggle('hidden', ! willShow);
+});
+
 const renderLocalTimes = () => {
     const formatter = new Intl.DateTimeFormat(navigator.language || 'es', {
         day: '2-digit',

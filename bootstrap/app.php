@@ -3,6 +3,7 @@
 use App\Http\Middleware\EnsureLigaAdmin;
 use App\Http\Middleware\EnsureLigaPlayer;
 use App\Http\Middleware\EnsureSuperAdmin;
+use App\Http\Middleware\PreventBackHistory;
 use App\Http\Middleware\SetCurrentLiga;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'liga.admin' => EnsureLigaAdmin::class,
             'liga.player' => EnsureLigaPlayer::class,
             'superadmin' => EnsureSuperAdmin::class,
+            'no.cache' => PreventBackHistory::class,
         ]);
 
         // No hay login global: el destino depende del area (superadmin vs liga).

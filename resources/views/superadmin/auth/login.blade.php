@@ -24,10 +24,7 @@
                 <input id="email" name="email" type="email" value="{{ old('email') }}" required autofocus autocomplete="username" class="rounded-lg px-4 py-3.5 text-base" placeholder="superadmin@correo.com">
             </label>
 
-            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password">
-                Contraseña
-                <input id="password" name="password" type="password" required autocomplete="current-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
-            </label>
+            <x-password-input name="password" label="Contraseña" autocomplete="current-password" :required="true" />
 
             <button type="submit" class="btn btn-primary w-full">Entrar</button>
         </form>

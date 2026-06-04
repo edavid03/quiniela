@@ -21,15 +21,9 @@
             <input type="hidden" name="username" value="{{ $username }}">
             <input type="hidden" name="token" value="{{ $token }}">
 
-            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password">
-                Nueva contrase&ntilde;a
-                <input id="password" name="password" type="password" required autofocus autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
-            </label>
+            <x-password-input name="password" label="Nueva contraseña" autocomplete="new-password" :required="true" autofocus />
 
-            <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password_confirmation">
-                Repetir contrase&ntilde;a
-                <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" class="rounded-lg px-4 py-3.5 text-base" placeholder="••••••••">
-            </label>
+            <x-password-input name="password_confirmation" label="Repetir contraseña" autocomplete="new-password" :required="true" />
 
             <button type="submit" class="btn btn-primary w-full">Actualizar clave</button>
         </form>

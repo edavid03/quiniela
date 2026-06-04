@@ -60,10 +60,7 @@
                             <input id="username" name="username" type="text" value="{{ old('username') }}" required autofocus autocomplete="username" class="rounded-lg px-4 py-3.5 text-base shadow-[inset_0_-3px_0_color-mix(in_srgb,var(--app-border)_45%,transparent)]" placeholder="tu_usuario">
                         </label>
 
-                        <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="password">
-                            Contrase&ntilde;a
-                            <input id="password" name="password" type="password" required autocomplete="current-password" class="rounded-lg px-4 py-3.5 text-base shadow-[inset_0_-3px_0_color-mix(in_srgb,var(--app-border)_45%,transparent)]" placeholder="••••••••">
-                        </label>
+                        <x-password-input name="password" label="Contraseña" autocomplete="current-password" :required="true" class="shadow-[inset_0_-3px_0_color-mix(in_srgb,var(--app-border)_45%,transparent)]" />
 
                         <div class="flex flex-wrap items-center justify-between gap-3">
                             <label class="flex items-center gap-2 text-sm font-bold text-[var(--app-muted)]">

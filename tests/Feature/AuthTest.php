@@ -84,4 +84,28 @@ class AuthTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_login_is_rate_limited_after_too_many_attempts(): void
+    {
+        $liga = $this->createLiga();
+        $this->ligaUser($liga, [
+            'username' => 'usuario_prueba',
+            'password' => Hash::make('clave-segura'),
+        ]);
+
+        // throttle:5,1 -> los primeros 5 intentos pasan (302 con error), el 6to es 429.
+        for ($i = 0; $i < 5; $i++) {
+            $this->post(route('liga.login.store', $liga), [
+                'username' => 'usuario_prueba',
+                'password' => 'incorrecta',
+            ])->assertStatus(302);
+        }
+
+        $this->post(route('liga.login.store', $liga), [
+            'username' => 'usuario_prueba',
+            'password' => 'incorrecta',
+        ])->assertStatus(429);
+
+        $this->assertGuest();
+    }
 }
