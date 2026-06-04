@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'email' => env('CONTACT_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+    'email' => env('CONTACT_EMAIL', 'contacto@whaleecoding.com'),
 
     'whatsapp' => env('CONTACT_WHATSAPP'),
 

@@ -125,6 +125,6 @@ return [
     |
     */
 
-    'contact_to' => env('CONTACT_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+    'contact_to' => env('CONTACT_EMAIL', 'contacto@whaleecoding.com'),
 
 ];
