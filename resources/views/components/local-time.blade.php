@@ -1,7 +1,9 @@
 @props(['date'])
 
+{{-- Hora oficial de Venezuela (Caracas) fija para todos. Se renderiza server-side
+     desde el instante UTC; la logica de cierre de pronosticos sigue en UTC aparte. --}}
 @php
-    $dateUtc = \Carbon\Carbon::parse($date, 'UTC')->utc();
+    $caracas = \Carbon\Carbon::parse($date, 'UTC')->setTimezone('America/Caracas');
 @endphp
 
-<time datetime="{{ $dateUtc->toIso8601String() }}" data-local-time="{{ $dateUtc->toIso8601String() }}">--/--/---- --:--</time>
+<time datetime="{{ $caracas->toIso8601String() }}">{{ $caracas->format('d/m/Y H:i') }} <span class="text-[var(--app-muted)]">VET</span></time>
