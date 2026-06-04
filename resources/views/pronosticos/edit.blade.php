@@ -30,7 +30,11 @@
         @endif
 
         <section class="surface overflow-hidden">
-            @forelse ($partidos as $partido)
+            @forelse ($partidos->groupBy('fase') as $fase => $partidosFase)
+                <div class="border-b border-[var(--app-border)] bg-[var(--app-panel-soft)] px-5 py-3">
+                    <span class="kicker">{{ $fase }}</span>
+                </div>
+                @foreach ($partidosFase as $partido)
                 @php
                     $prediccion = $predicciones->get($partido->id);
                     $cierrePronostico = $partido->fechaCierrePronosticosUtc();
@@ -61,6 +65,7 @@
                         <input name="predicciones[{{ $partido->id }}][goles_visitante]" type="number" min="0" max="99" value="{{ old("predicciones.{$partido->id}.goles_visitante", $prediccion->goles_visitante ?? '') }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
                     </div>
                 </article>
+                @endforeach
             @empty
                 <div class="px-5 py-6 text-[var(--app-muted)]">No hay partidos disponibles para pronosticar.</div>
             @endforelse

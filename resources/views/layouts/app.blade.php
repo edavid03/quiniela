@@ -40,6 +40,9 @@
                         <a href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.pronosticos.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Pronosticos</a>
                         <a href="{{ route('liga.resultados.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Resultados</a>
                         <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.rankings.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Ranking</a>
+                        @unless (auth()->user()->isLigaAdmin())
+                            <a href="{{ route('liga.mi-desempeno', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.mi-desempeno') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Mi desempeño</a>
+                        @endunless
                         <a href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.reglas.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Reglas</a>
                         @if (auth()->user()->isLigaAdmin())
                             <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary {{ request()->routeIs('liga.admin.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)]' : '' }}">Admin</a>
@@ -47,10 +50,10 @@
                     </nav>
 
                     <div class="flex min-w-0 items-center gap-1.5 text-xs md:flex-wrap md:gap-2 md:text-sm">
-                        <span class="flex min-h-9 max-w-32 items-center gap-2 rounded-full bg-[var(--app-panel-soft)] px-1.5 py-1 font-bold text-[var(--app-text)] sm:max-w-40 md:min-h-11 md:max-w-none md:px-2.5">
+                        <a href="{{ route('liga.profile.edit', ['liga' => $currentLiga]) }}" title="Mi cuenta" class="flex min-h-9 max-w-32 items-center gap-2 rounded-full bg-[var(--app-panel-soft)] px-1.5 py-1 font-bold text-[var(--app-text)] no-underline transition hover:bg-[var(--app-panel-strong)] sm:max-w-40 md:min-h-11 md:max-w-none md:px-2.5 {{ request()->routeIs('liga.profile.*') ? 'ring-2 ring-[var(--app-primary)]' : '' }}">
                             <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-[var(--app-secondary)] font-display text-[11px] font-black text-white md:h-7 md:w-7 md:text-xs">{{ strtoupper(mb_substr(auth()->user()->name ?? '?', 0, 1)) }}</span>
                             <span class="truncate">{{ auth()->user()->name }}</span>
-                        </span>
+                        </a>
                         <button type="button" data-theme-toggle aria-label="Cambiar tema" title="Cambiar tema" class="btn btn-secondary hidden w-11 px-0 md:inline-flex">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5 dark:hidden" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
@@ -68,11 +71,14 @@
             </header>
 
             <nav class="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--app-border)] bg-[var(--app-panel)]/94 px-2 pb-[calc(.75rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-18px_50px_rgba(18,11,36,.14)] backdrop-blur-xl md:hidden" aria-label="Navegacion principal">
-                <div class="mx-auto grid max-w-lg {{ auth()->user()->isLigaAdmin() ? 'grid-cols-6' : 'grid-cols-5' }} gap-1.5">
+                <div class="mx-auto grid max-w-lg grid-cols-6 gap-1.5">
                     <a href="{{ route('liga.dashboard', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.dashboard') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Mesa</a>
                     <a href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.pronosticos.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Pron.</a>
                     <a href="{{ route('liga.resultados.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.resultados.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Result.</a>
                     <a href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.rankings.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Ranking</a>
+                    @unless (auth()->user()->isLigaAdmin())
+                        <a href="{{ route('liga.mi-desempeno', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.mi-desempeno') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Mi rend.</a>
+                    @endunless
                     <a href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.reglas.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Reglas</a>
                     @if (auth()->user()->isLigaAdmin())
                         <a href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary min-h-12 px-1 text-[10px] {{ request()->routeIs('liga.admin.*') ? 'border-[var(--app-primary)] bg-[var(--app-panel-soft)] text-[var(--app-primary)]' : '' }}">Admin</a>

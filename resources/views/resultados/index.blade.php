@@ -24,8 +24,13 @@
             <span class="rounded-lg bg-[var(--app-panel-soft)] px-3 py-2 text-sm font-extrabold text-[var(--app-muted)]">{{ $partidos->count() }} partidos</span>
         </div>
 
-        <div class="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
-            @forelse ($partidos as $partido)
+        @forelse ($partidos->groupBy('fase') as $fase => $partidosFase)
+            <div class="flex items-center justify-between gap-3 border-t border-[var(--app-border)] bg-[var(--app-panel-soft)] px-5 py-3 first:border-t-0">
+                <span class="kicker">{{ $fase }}</span>
+                <span class="text-xs font-extrabold text-[var(--app-muted)]">{{ $partidosFase->count() }}</span>
+            </div>
+            <div class="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
+                @foreach ($partidosFase as $partido)
                 @php
                     $tieneResultado = $partido->goles_local !== null && $partido->goles_visitante !== null;
                     $prediccion = $predicciones->get($partido->id);
@@ -97,9 +102,10 @@
                         @endif
                     </div>
                 </article>
-            @empty
-                <div class="px-1 py-2 font-semibold text-[var(--app-muted)]">Todavia no hay partidos cargados.</div>
-            @endforelse
-        </div>
+                @endforeach
+            </div>
+        @empty
+            <div class="px-5 py-6 font-semibold text-[var(--app-muted)]">Todavia no hay partidos cargados.</div>
+        @endforelse
     </section>
 @endsection

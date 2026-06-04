@@ -70,6 +70,7 @@
                         <span class="team-name">{{ $match->visitante->name ?? 'Visitante' }}</span>
                     </div>
                     <div class="text-sm font-semibold leading-6 text-[var(--app-muted)] lg:text-right">
+                        <span class="inline-flex rounded bg-[var(--app-panel-soft)] px-2 py-0.5 text-[10px] font-black uppercase text-[var(--app-muted)]">{{ $match->fase }}</span><br>
                         <x-local-time :date="$match->fecha_utc" /><br>
                         {{ $match->estadio }}
                     </div>
@@ -110,6 +111,25 @@
                         </div>
                         <p class="mt-2 text-xs font-extrabold text-[var(--app-secondary)]" data-countdown-status>Pronosticos abiertos</p>
                     </div>
+
+                    @if ($proximoPartido)
+                        <div class="relative z-10 mt-4 rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)] px-4 py-3">
+                            <span class="text-[10px] font-black uppercase text-[var(--app-muted)]">Partido que cierra</span>
+                            <div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 font-display text-sm font-black text-[var(--app-text)]">
+                                <span class="flag-chip">{!! $proximoPartido->local?->flagEmojiHtml() !!}</span>
+                                <span>{{ $proximoPartido->local->name ?? 'Local' }}</span>
+                                <span class="text-[var(--app-muted)]">vs</span>
+                                <span class="flag-chip">{!! $proximoPartido->visitante?->flagEmojiHtml() !!}</span>
+                                <span>{{ $proximoPartido->visitante->name ?? 'Visitante' }}</span>
+                            </div>
+                            <div class="mt-1.5 text-xs font-semibold text-[var(--app-muted)]">
+                                <x-local-time :date="$proximoPartido->fecha_utc" />
+                                @if ($proximoPartido->estadio)
+                                    <br>{{ $proximoPartido->estadio }}
+                                @endif
+                            </div>
+                        </div>
+                    @endif
                 @else
                     <p class="relative z-10 mt-3 text-sm font-semibold leading-6 text-[var(--app-muted)]">No hay partidos con pronosticos abiertos.</p>
                 @endif
@@ -131,6 +151,10 @@
                             </div>
                         </div>
                     @endforeach
+                </div>
+                <div class="border-t border-[var(--app-border)] px-5 py-4">
+                    <p class="text-xs font-semibold leading-5 text-[var(--app-muted)]">Cada pronostico se cierra 30 minutos antes del partido. Si hay empate en el ranking, desempata quien tenga mas marcadores exactos.</p>
+                    <a href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}" class="btn btn-secondary mt-3 w-full">Ver reglas completas</a>
                 </div>
             </section>
         </aside>

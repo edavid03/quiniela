@@ -7,7 +7,9 @@ use App\Http\Controllers\ImportController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LigaController;
 use App\Http\Controllers\LigaUserController;
+use App\Http\Controllers\MiDesempenoController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PronosticoController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ResultadoController;
@@ -56,10 +58,12 @@ Route::get('/superadmin', function () {
 Route::prefix('superadmin')->name('superadmin.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('login', [SuperAdminAuthController::class, 'showLogin'])->name('login');
-        Route::post('login', [SuperAdminAuthController::class, 'login'])->name('login.store');
+        Route::post('login', [SuperAdminAuthController::class, 'login'])
+            ->middleware('throttle:5,1')
+            ->name('login.store');
     });
 
-    Route::middleware(['auth', 'superadmin'])->group(function () {
+    Route::middleware(['auth', 'superadmin', 'no.cache'])->group(function () {
         Route::post('logout', [SuperAdminAuthController::class, 'logout'])->name('logout');
 
         Route::resource('ligas', LigaController::class)->except(['show']);
@@ -87,7 +91,9 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
     Route::middleware('guest')->group(function () {
         Route::get('login', [AuthController::class, 'showLogin'])->name('login');
-        Route::post('login', [AuthController::class, 'login'])->name('login.store');
+        Route::post('login', [AuthController::class, 'login'])
+            ->middleware('throttle:5,1')
+            ->name('login.store');
 
         Route::get('olvide-clave', [PasswordResetController::class, 'create'])->name('password.request');
         Route::post('olvide-clave', [PasswordResetController::class, 'store'])
@@ -100,11 +106,19 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
         Route::post('invitacion/{token}', [InvitationController::class, 'accept'])->name('invitation.accept');
     });
 
-    Route::middleware('auth')->group(function () {
+    Route::middleware(['auth', 'no.cache'])->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
         Route::get('dashboard', function () {
             $user = auth()->user();
+
+            // El proximo partido con pronosticos abiertos: alimenta el contador y
+            // el detalle (equipos/fecha) que se muestra en la card de cierre.
+            $proximoPartido = Partido::query()
+                ->conPronosticosAbiertos()
+                ->with(['local', 'visitante'])
+                ->orderBy('fecha_utc')
+                ->first();
 
             return view('dashboard', [
                 'teamCount' => Equipo::query()->count(),
@@ -115,7 +129,8 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
                 'playerCount' => User::query()
                     ->where('role', User::ROLE_LIGA_USER)
                     ->count(),
-                'predictionDeadline' => Partido::proximoCierrePronosticosUtc(),
+                'predictionDeadline' => $proximoPartido?->fechaCierrePronosticosUtc(),
+                'proximoPartido' => $proximoPartido,
                 'nextMatches' => Partido::query()
                     ->with(['local', 'visitante'])
                     ->orderBy('fecha_utc')
@@ -126,6 +141,11 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
         Route::get('rankings', [RankingController::class, 'index'])->name('rankings.index');
         Route::get('resultados', [ResultadoController::class, 'index'])->name('resultados.index');
+        Route::get('mi-desempeno', [MiDesempenoController::class, 'index'])->middleware('liga.player')->name('mi-desempeno');
+
+        Route::get('perfil', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('perfil', [ProfileController::class, 'update'])->name('profile.update');
+        Route::put('perfil/clave', [ProfileController::class, 'updatePassword'])->name('profile.password');
         Route::view('reglas', 'reglas.index')->name('reglas.index');
         Route::get('pronosticos', [PronosticoController::class, 'edit'])->middleware('liga.player')->name('pronosticos.edit');
         Route::post('pronosticos', [PronosticoController::class, 'update'])->middleware('liga.player')->name('pronosticos.update');

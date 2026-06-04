@@ -8,6 +8,7 @@ use App\Support\Tenancy;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -75,6 +76,11 @@ class User extends Authenticatable
     public function liga(): BelongsTo
     {
         return $this->belongsTo(Liga::class);
+    }
+
+    public function predicciones(): HasMany
+    {
+        return $this->hasMany(Prediccion::class, 'usuario_id');
     }
 
     public function isSuperAdmin(): bool
