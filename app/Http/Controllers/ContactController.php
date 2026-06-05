@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class ContactController extends Controller
 {
@@ -21,13 +22,19 @@ class ContactController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255'],
+            'phone' => ['required', 'string', 'max:30'],
+            'plan' => ['required', Rule::in(array_keys(config('contact.plans')))],
+            'horario' => ['required', Rule::in(array_keys(config('contact.horarios')))],
             'message' => ['required', 'string', 'max:5000'],
         ]);
 
         Mail::to(config('mail.contact_to'))->queue(new ContactMail(
-            $data['name'],
-            $data['email'],
-            $data['message'],
+            name: $data['name'],
+            email: $data['email'],
+            phone: $data['phone'],
+            plan: config('contact.plans')[$data['plan']],
+            horario: config('contact.horarios')[$data['horario']],
+            message: $data['message'],
         ));
 
         return $this->ok($request);

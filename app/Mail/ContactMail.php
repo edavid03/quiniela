@@ -15,16 +15,19 @@ class ContactMail extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public function __construct(
-        public string $senderName,
-        public string $senderEmail,
-        public string $messageBody,
+        public string $name,
+        public string $email,
+        public string $phone,
+        public string $plan,
+        public string $horario,
+        public string $message,
     ) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
             subject: 'Nuevo contacto desde la web',
-            replyTo: [new Address($this->senderEmail, $this->senderName)],
+            replyTo: [new Address($this->email, $this->name)],
         );
     }
 
