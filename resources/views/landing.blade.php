@@ -140,7 +140,7 @@
 
     {{-- CONTACTO --}}
     <section id="contacto" class="scroll-mt-24 bg-[var(--app-panel)] py-16 md:py-20">
-        <div class="app-shell grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-start">
+        <div class="app-shell grid gap-10 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
             <div>
                 <span class="kicker">Contacto</span>
                 <h2 class="page-heading mt-3 md:text-5xl">¿Quieres tu liga?</h2>
@@ -183,11 +183,11 @@
                     <div class="alert mb-5 border-red-200 bg-red-50 text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30">{{ $errors->first() }}</div>
                 @endif
 
-                <form method="POST" action="{{ route('contacto.send') }}" class="grid gap-5" data-contact-form>
+                <form method="POST" action="{{ route('contacto.send') }}" class="grid gap-5 sm:grid-cols-2" data-contact-form>
                     @csrf
 
                     {{-- Feedback inline para el envio via fetch (sin recargar la pagina). --}}
-                    <div data-contact-feedback class="hidden" role="status" aria-live="polite"></div>
+                    <div data-contact-feedback class="hidden sm:col-span-2" role="status" aria-live="polite"></div>
 
                     {{-- Honeypot anti-bot: oculto para humanos --}}
                     <div class="hidden" aria-hidden="true">
@@ -206,12 +206,37 @@
                         <input id="email" name="email" type="email" value="{{ old('email') }}" required class="rounded-lg px-4 py-3" placeholder="tu@correo.com">
                     </label>
 
-                    <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="message">
+                    <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="phone">
+                        Teléfono
+                        <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" required class="rounded-lg px-4 py-3" placeholder="+58 412 1234567">
+                    </label>
+
+                    <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)]" for="plan">
+                        ¿Qué plan te interesa?
+                        <select id="plan" name="plan" required class="rounded-lg py-3 pl-4 pr-11">
+                            <option value="" disabled @selected(! old('plan'))>Elige un plan</option>
+                            @foreach (config('contact.plans') as $key => $label)
+                                <option value="{{ $key }}" @selected(old('plan') === (string) $key)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+
+                    <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)] sm:col-span-2" for="horario">
+                        Mejor horario para contactarte
+                        <select id="horario" name="horario" required class="rounded-lg py-3 pl-4 pr-11">
+                            <option value="" disabled @selected(! old('horario'))>Elige un horario</option>
+                            @foreach (config('contact.horarios') as $key => $label)
+                                <option value="{{ $key }}" @selected(old('horario') === (string) $key)>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+
+                    <label class="grid gap-2 text-sm font-extrabold text-[var(--app-text)] sm:col-span-2" for="message">
                         Mensaje
                         <textarea id="message" name="message" rows="4" required class="rounded-lg px-4 py-3" placeholder="Cuéntanos de tu grupo">{{ old('message') }}</textarea>
                     </label>
 
-                    <button type="submit" class="btn btn-primary w-full">Enviar mensaje</button>
+                    <button type="submit" class="btn btn-primary w-full sm:col-span-2">Enviar mensaje</button>
                 </form>
             </div>
         </div>

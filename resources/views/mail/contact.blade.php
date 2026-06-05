@@ -1,15 +1,21 @@
 @component('mail::message')
 # Nuevo contacto desde la web
 
-**Nombre:** {{ $senderName }}
+**Nombre:** {{ $name }}
 
-**Email:** {{ $senderEmail }}
+**Email:** {{ $email }}
+
+**Teléfono:** {{ $phone }}
+
+**Plan de interés:** {{ $plan }}
+
+**Mejor horario:** {{ $horario }}
 
 ---
 
-{{ $messageBody }}
+{{ $message }}
 
-@component('mail::button', ['url' => 'mailto:'.$senderEmail])
+@component('mail::button', ['url' => 'mailto:'.$email])
 Responder
 @endcomponent
 @endcomponent

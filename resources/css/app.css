@@ -128,13 +128,34 @@
     input[type="email"],
     input[type="password"],
     input[type="number"],
+    input[type="tel"],
+    select,
     textarea {
         border: 1px solid var(--app-border);
         background: var(--app-panel-strong);
         color: var(--app-text);
     }
 
+    /* Flecha propia para el select: la nativa queda pegada al borde y no se puede
+       separar. appearance-none la oculta; el chevron SVG se posiciona con aire a
+       la derecha (el blade reserva el espacio con pr-11). */
+    select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1.1rem;
+    }
+
+    /* El popup nativo de <option> ignora el color heredado del select en varios
+       navegadores; sin esto el texto sale crema sobre fondo claro (ilegible). */
+    option {
+        background: var(--app-panel-strong);
+        color: var(--app-text);
+    }
+
     input:focus,
+    select:focus,
     textarea:focus {
         outline: none;
         border-color: var(--app-accent-2);

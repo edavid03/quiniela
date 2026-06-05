@@ -126,8 +126,9 @@ const setupContactForm = () => {
     const defaultLabel = submitButton?.textContent;
 
     // Mismas clases que los bloques server-rendered del blade (Tailwind ya las genera).
-    const okClass = 'mb-1 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 font-bold text-[var(--app-success)] dark:border-emerald-900/50 dark:bg-emerald-950/30';
-    const errClass = 'alert mb-1 border-red-200 bg-red-50 text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30';
+    // sm:col-span-2 mantiene el mensaje a ancho completo en el form de 2 columnas.
+    const okClass = 'mb-1 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 font-bold text-[var(--app-success)] dark:border-emerald-900/50 dark:bg-emerald-950/30 sm:col-span-2';
+    const errClass = 'alert mb-1 border-red-200 bg-red-50 text-[var(--app-danger)] dark:border-red-900/50 dark:bg-red-950/30 sm:col-span-2';
 
     const showFeedback = (message, ok) => {
         if (! feedback) {

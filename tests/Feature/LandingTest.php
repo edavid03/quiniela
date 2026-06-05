@@ -60,12 +60,19 @@ class LandingTest extends TestCase
             ->post(route('contacto.send'), [
                 'name' => 'Ana',
                 'email' => 'ana@correo.test',
+                'phone' => '+58 412 1234567',
+                'plan' => '25',
+                'horario' => 'tarde',
                 'message' => 'Quiero armar mi liga.',
             ])
             ->assertRedirect('/')
             ->assertSessionHas('status');
 
-        Mail::assertQueued(ContactMail::class);
+        Mail::assertQueued(ContactMail::class, function (ContactMail $mail) {
+            return $mail->phone === '+58 412 1234567'
+                && $mail->plan === config('contact.plans.25')
+                && $mail->horario === config('contact.horarios.tarde');
+        });
     }
 
     public function test_contact_form_validates_input(): void
@@ -76,9 +83,12 @@ class LandingTest extends TestCase
             ->post(route('contacto.send'), [
                 'name' => '',
                 'email' => 'no-es-un-email',
+                'phone' => '',
+                'plan' => 'plan-inexistente',
+                'horario' => 'horario-inexistente',
                 'message' => '',
             ])
-            ->assertSessionHasErrors(['name', 'email', 'message']);
+            ->assertSessionHasErrors(['name', 'email', 'phone', 'plan', 'horario', 'message']);
 
         Mail::assertNothingQueued();
     }
@@ -91,6 +101,9 @@ class LandingTest extends TestCase
             ->post(route('contacto.send'), [
                 'name' => 'Bot',
                 'email' => 'bot@spam.test',
+                'phone' => '+58 000',
+                'plan' => 'gratis',
+                'horario' => 'asap',
                 'message' => 'spam',
                 'website' => 'http://spam.test',
             ])
