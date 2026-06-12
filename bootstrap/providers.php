@@ -1,11 +1,14 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\TelescopeServiceProvider;
+
 $providers = [
-    App\Providers\AppServiceProvider::class,
+    AppServiceProvider::class,
 ];
 
 if (class_exists('Laravel\\Telescope\\TelescopeApplicationServiceProvider')) {
-    $providers[] = App\Providers\TelescopeServiceProvider::class;
+    $providers[] = TelescopeServiceProvider::class;
 }
 
 return $providers;

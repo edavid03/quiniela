@@ -9,21 +9,24 @@
         </div>
     @endif
 
-    <section class="mb-6 grid gap-5 lg:grid-cols-[1fr_auto] lg:items-end">
-        <div>
+    <section class="mb-6">
+        <div class="mb-4 md:mb-6">
             <span class="kicker">FWC26 Quiniela</span>
             <h1 class="page-heading mt-3 md:text-6xl">Mesa de la quiniela</h1>
-            <p class="mt-3 max-w-2xl text-base font-semibold leading-7 text-[var(--app-muted)] sm:text-lg">Pronosticos, partidos y ranking del grupo con una identidad inspirada en Monterrey 2026.</p>
         </div>
-        <div class="action-row lg:justify-end">
-            @unless (auth()->user()->isLigaAdmin())
-                <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
-            @endunless
-            <a class="btn btn-secondary" href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}">Ver ranking</a>
-            <a class="btn btn-secondary" href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}">Ver reglas</a>
-            @if (auth()->user()->isLigaAdmin())
-                <a class="btn btn-secondary" href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}">Administrar liga</a>
-            @endif
+        <div class="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
+            <p class="max-w-2xl text-base font-semibold leading-7 text-[var(--app-muted)] sm:text-lg">Pronosticos, partidos y ranking del grupo con una identidad inspirada en Monterrey 2026.</p>
+            <div class="action-row lg:justify-end">
+                @unless (auth()->user()->isLigaAdmin())
+                    <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
+                @endunless
+                <a class="btn btn-secondary" href="{{ route('liga.pronosticos-publicos.index', ['liga' => $currentLiga]) }}">Pronosticos publicos</a>
+                <a class="btn btn-secondary" href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}">Ver ranking</a>
+                <a class="btn btn-secondary" href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}">Ver reglas</a>
+                @if (auth()->user()->isLigaAdmin())
+                    <a class="btn btn-secondary" href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}">Administrar liga</a>
+                @endif
+            </div>
         </div>
     </section>
 

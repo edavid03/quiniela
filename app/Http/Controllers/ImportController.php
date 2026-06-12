@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportController extends Controller
 {
@@ -27,8 +28,8 @@ class ImportController extends Controller
 
     public function template()
     {
-        if (class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
-            return \Maatwebsite\Excel\Facades\Excel::download(new UsersTemplateExport, 'plantilla-usuarios.xlsx');
+        if (class_exists(Excel::class)) {
+            return Excel::download(new UsersTemplateExport, 'plantilla-usuarios.xlsx');
         }
 
         return response()->streamDownload(function () {
@@ -199,8 +200,8 @@ class ImportController extends Controller
     {
         $extension = mb_strtolower($file->getClientOriginalExtension());
 
-        if ($extension !== 'csv' && class_exists(\Maatwebsite\Excel\Facades\Excel::class)) {
-            return \Maatwebsite\Excel\Facades\Excel::toArray(new UsersImport, $file)[0] ?? [];
+        if ($extension !== 'csv' && class_exists(Excel::class)) {
+            return Excel::toArray(new UsersImport, $file)[0] ?? [];
         }
 
         $handle = fopen($file->getRealPath(), 'r');

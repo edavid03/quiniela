@@ -11,6 +11,7 @@ use App\Http\Controllers\MiDesempenoController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PronosticoController;
+use App\Http\Controllers\PronosticoPublicoController;
 use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ResultadoController;
 use App\Http\Controllers\SuperAdminAuthController;
@@ -141,6 +142,7 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
         Route::get('rankings', [RankingController::class, 'index'])->name('rankings.index');
         Route::get('resultados', [ResultadoController::class, 'index'])->name('resultados.index');
+        Route::get('pronosticos-publicos', [PronosticoPublicoController::class, 'index'])->name('pronosticos-publicos.index');
         Route::get('mi-desempeno', [MiDesempenoController::class, 'index'])->middleware('liga.player')->name('mi-desempeno');
 
         Route::get('perfil', [ProfileController::class, 'edit'])->name('profile.edit');

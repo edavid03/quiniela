@@ -7,6 +7,7 @@ use App\Models\Plan;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use Tests\TestCase;
 
 class ImportTest extends TestCase
@@ -178,7 +179,7 @@ class ImportTest extends TestCase
         $this->actingAs($admin)
             ->get(route('liga.admin.import.template', $liga))
             ->assertOk()
-            ->assertDownload(class_exists(\Maatwebsite\Excel\Facades\Excel::class)
+            ->assertDownload(class_exists(Excel::class)
                 ? 'plantilla-usuarios.xlsx'
                 : 'plantilla-usuarios.csv');
     }
