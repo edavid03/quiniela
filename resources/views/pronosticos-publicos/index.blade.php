@@ -35,34 +35,40 @@
                     $prediccionesPorUsuario = $partido->predicciones->keyBy('usuario_id');
                 @endphp
 
-                <article class="grid gap-3 rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)] p-4 text-xs">
-                    <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-1 text-center text-[11px] font-extrabold leading-tight">
-                        <div class="min-w-0">
-                            <span class="flag-chip mx-auto text-sm">{!! $partido->local?->flagEmojiHtml() !!}</span>
-                            <span class="mt-1 block truncate">{{ $partido->local->name ?? 'Local' }}</span>
+                <details class="group rounded-lg border border-[var(--app-border)] bg-[var(--app-panel-strong)] text-xs [&::-webkit-details-marker]:hidden">
+                    <summary class="list-none cursor-pointer p-4 transition hover:bg-[var(--app-panel-soft)] relative">
+                        <div class="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--app-muted)] transition-transform group-open:rotate-180">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-5 w-5"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
                         </div>
-                        <span class="rounded-full bg-[var(--app-secondary)] px-1.5 py-0.5 text-[10px] font-black text-white">vs</span>
-                        <div class="min-w-0">
-                            <span class="flag-chip mx-auto text-sm">{!! $partido->visitante?->flagEmojiHtml() !!}</span>
-                            <span class="mt-1 block truncate">{{ $partido->visitante->name ?? 'Visitante' }}</span>
+                        
+                        <div class="grid gap-3 pr-6">
+                            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2 text-center text-sm font-extrabold leading-tight md:text-base">
+                                <div class="min-w-0">
+                                    <span class="flag-chip mx-auto text-3xl md:text-4xl">{!! $partido->local?->flagEmojiHtml() !!}</span>
+                                    <span class="mt-2 block truncate">{{ $partido->local->name ?? 'Local' }}</span>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-[9px] font-black uppercase text-[var(--app-muted)]">Resultado</span>
+                                    <div class="mt-1 font-display text-3xl font-black leading-none text-[var(--app-text)] md:text-4xl">
+                                        {{ $partido->goles_local }} - {{ $partido->goles_visitante }}
+                                    </div>
+                                </div>
+                                <div class="min-w-0">
+                                    <span class="flag-chip mx-auto text-3xl md:text-4xl">{!! $partido->visitante?->flagEmojiHtml() !!}</span>
+                                    <span class="mt-2 block truncate">{{ $partido->visitante->name ?? 'Visitante' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="text-center text-[10px] font-semibold leading-4 text-[var(--app-muted)]">
+                                <x-local-time :date="$partido->fecha_utc" />
+                                @if ($partido->estadio)
+                                    <br>{{ $partido->estadio }}
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    </summary>
 
-                    <div class="text-center text-[10px] font-semibold leading-4 text-[var(--app-muted)]">
-                        <x-local-time :date="$partido->fecha_utc" />
-                        @if ($partido->estadio)
-                            <br>{{ $partido->estadio }}
-                        @endif
-                    </div>
-
-                    <div class="text-center">
-                        <span class="text-[9px] font-black uppercase text-[var(--app-muted)]">Resultado oficial</span>
-                        <div class="mt-1 font-display text-2xl font-black leading-none text-[var(--app-text)]">
-                            {{ $partido->goles_local }} - {{ $partido->goles_visitante }}
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
+                    <div class="overflow-x-auto border-t border-[var(--app-border)] p-4">
                         <table class="w-full text-left text-xs">
                             <thead>
                                 <tr class="border-b border-[var(--app-border)] text-[9px] font-black uppercase text-[var(--app-muted)]">
@@ -137,7 +143,7 @@
                             </tbody>
                         </table>
                     </div>
-                </article>
+                </details>
                 @endforeach
             </div>
         @empty
