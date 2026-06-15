@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AssignTenantSession;
 use App\Http\Middleware\EnsureLigaAdmin;
 use App\Http\Middleware\EnsureLigaPlayer;
 use App\Http\Middleware\EnsureSuperAdmin;
@@ -18,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Corre antes de StartSession: scopea la cookie de sesión por slug de liga.
+        $middleware->prependToGroup('web', AssignTenantSession::class);
+
         $middleware->alias([
             'liga' => SetCurrentLiga::class,
             'liga.admin' => EnsureLigaAdmin::class,
