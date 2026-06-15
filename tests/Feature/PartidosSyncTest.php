@@ -283,6 +283,33 @@ class PartidosSyncTest extends TestCase
         ]);
     }
 
+    // 6d. El sync persiste la hora de la ultima corrida en estado durable (no cache).
+    public function test_sync_records_last_run_in_durable_settings(): void
+    {
+        $this->equipo(1, 'MEX', 770);
+        $this->equipo(3, 'KOR', 805);
+        $this->partidoGrupos(1, 3);
+
+        $this->fakeApi([$this->match(['id' => 700])]);
+        $this->artisan('partidos:sync')->assertExitCode(0);
+
+        $this->assertDatabaseHas('app_settings', ['key' => 'partidos_sync_last_run']);
+        $this->assertNotNull(
+            DB::table('app_settings')
+                ->where('key', 'partidos_sync_last_run')
+                ->value('value')
+        );
+    }
+
+    // 6e. El --dry-run NO toca el estado durable.
+    public function test_dry_run_does_not_record_last_run(): void
+    {
+        $this->fakeApi([]);
+        $this->artisan('partidos:sync', ['--dry-run' => true])->assertExitCode(0);
+
+        $this->assertDatabaseMissing('app_settings', ['key' => 'partidos_sync_last_run']);
+    }
+
     // 7. Equipo sin mapear: se saltea sin romper.
     public function test_unmapped_team_is_skipped_without_error(): void
     {

@@ -7,7 +7,6 @@ use App\Services\Football\SyncReport;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -31,9 +30,12 @@ class PartidosSync extends Command
         }
 
         if (! $this->option('dry-run')) {
-            // Store database: el scheduler y el contenedor web no comparten
-            // filesystem en prod, pero si la base; un cache de archivo no se veria.
-            Cache::store('database')->put('partidos_sync_last_run', now()->toIso8601String());
+            // Estado durable en DB (no cache): sobrevive al optimize:clear del
+            // deploy y es visible desde el contenedor web (comparten la base).
+            DB::table('app_settings')->updateOrInsert(
+                ['key' => 'partidos_sync_last_run'],
+                ['value' => now()->toIso8601String(), 'updated_at' => now()],
+            );
         }
 
         $this->table(array_keys($report->toArray()), [$report->toArray()]);

@@ -21,6 +21,7 @@ class FootballDataOrgClient implements FootballDataProvider
 
         $response = Http::baseUrl((string) config('services.football_data.base_url'))
             ->withHeaders(['X-Auth-Token' => (string) config('services.football_data.token')])
+            ->timeout(20)
             ->get("/competitions/{$competition}/matches")
             ->throw();
 

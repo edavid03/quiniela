@@ -6,14 +6,16 @@ use App\Models\Partido;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class AdminPartidoResultadoController extends Controller
 {
     public function edit(): View
     {
-        $ultimaSync = Cache::store('database')->get('partidos_sync_last_run');
+        $ultimaSync = DB::table('app_settings')
+            ->where('key', 'partidos_sync_last_run')
+            ->value('value');
 
         return view('admin.resultados', [
             'partidos' => Partido::query()
