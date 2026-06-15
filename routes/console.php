@@ -11,3 +11,10 @@ Artisan::command('inspire', function () {
 // Telescope graba TODAS las peticiones; sin poda las tablas crecen sin limite.
 // Requiere que el scheduler corra en prod (cron `schedule:run` o `schedule:work`).
 Schedule::command('telescope:prune --hours=48')->daily();
+
+// Importa resultados del Mundial y finaliza los partidos terminados. Una sola
+// request por corrida; cada 10 min queda holgado bajo el limite del tier free.
+Schedule::command('partidos:sync')
+    ->everyTenMinutes()
+    ->withoutOverlapping()
+    ->runInBackground();

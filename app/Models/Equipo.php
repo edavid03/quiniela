@@ -12,7 +12,7 @@ class Equipo extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'name', 'code', 'grupo'];
+    protected $fillable = ['id', 'name', 'code', 'grupo', 'api_id'];
 
     public function partidosLocal()
     {

@@ -15,7 +15,7 @@ class Partido extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'local_id', 'visitante_id', 'fecha_utc', 'fecha_caracas', 'estadio', 'fase', 'goles_local', 'goles_visitante'];
+    protected $fillable = ['id', 'api_id', 'local_id', 'visitante_id', 'fecha_utc', 'fecha_caracas', 'estadio', 'fase', 'goles_local', 'goles_visitante'];
 
     protected static function booted(): void
     {
