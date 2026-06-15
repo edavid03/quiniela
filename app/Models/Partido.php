@@ -15,7 +15,11 @@ class Partido extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['id', 'api_id', 'local_id', 'visitante_id', 'fecha_utc', 'fecha_caracas', 'estadio', 'fase', 'goles_local', 'goles_visitante'];
+    public const ORIGEN_MANUAL = 'manual';
+
+    public const ORIGEN_API = 'api';
+
+    protected $fillable = ['id', 'api_id', 'local_id', 'visitante_id', 'fecha_utc', 'fecha_caracas', 'estadio', 'fase', 'goles_local', 'goles_visitante', 'resultado_origen'];
 
     protected static function booted(): void
     {
@@ -81,11 +85,12 @@ class Partido extends Model
         return $proximoPartidoAbierto->fechaCierrePronosticosUtc();
     }
 
-    public function finalizarPartido(int $golesLocal, int $golesVisitante): void
+    public function finalizarPartido(int $golesLocal, int $golesVisitante, string $origen = self::ORIGEN_MANUAL): void
     {
         $this->update([
             'goles_local' => $golesLocal,
             'goles_visitante' => $golesVisitante,
+            'resultado_origen' => $origen,
         ]);
 
         $signoReal = ($golesLocal > $golesVisitante) ? 1 : (($golesLocal < $golesVisitante) ? 2 : 0);

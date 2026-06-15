@@ -117,6 +117,13 @@ class PartidoSyncService
             return;
         }
 
+        // Manual blinda: un resultado cargado a mano no se sobrescribe nunca.
+        if ($partido->resultado_origen === Partido::ORIGEN_MANUAL) {
+            $report->bloqueados++;
+
+            return;
+        }
+
         $sinCambios = $partido->goles_local !== null
             && (int) $partido->goles_local === $match->homeGoals
             && (int) $partido->goles_visitante === $match->awayGoals;
@@ -127,7 +134,7 @@ class PartidoSyncService
             return;
         }
 
-        $partido->finalizarPartido($match->homeGoals, $match->awayGoals);
+        $partido->finalizarPartido($match->homeGoals, $match->awayGoals, Partido::ORIGEN_API);
         $report->finalizados++;
     }
 }

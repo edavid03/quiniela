@@ -3,19 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Partido;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class AdminPartidoResultadoController extends Controller
 {
     public function edit(): View
     {
+        $ultimaSync = Cache::store('database')->get('partidos_sync_last_run');
+
         return view('admin.resultados', [
             'partidos' => Partido::query()
                 ->with(['local', 'visitante'])
                 ->orderBy('fecha_utc')
                 ->get(),
+            'ultimaSync' => $ultimaSync ? Carbon::parse($ultimaSync) : null,
         ]);
     }
 

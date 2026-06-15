@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Partido;
 use App\Models\Prediccion;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -97,6 +98,41 @@ class AdminResultadoTest extends TestCase
             'acertado' => false,
             'puntos' => 1,
         ]);
+    }
+
+    public function test_manual_result_is_marked_as_manual_origin(): void
+    {
+        $superadmin = $this->superAdmin();
+        $partido = $this->crearPartido();
+
+        $this->actingAs($superadmin)
+            ->post(route('superadmin.resultados.update'), [
+                'resultados' => [
+                    $partido->id => [
+                        'goles_local' => 1,
+                        'goles_visitante' => 0,
+                    ],
+                ],
+            ])
+            ->assertRedirect(route('superadmin.resultados.edit'));
+
+        $this->assertDatabaseHas('partidos', [
+            'id' => $partido->id,
+            'resultado_origen' => 'manual',
+        ]);
+    }
+
+    public function test_resultados_screen_shows_automation_panel_and_official_badge(): void
+    {
+        $superadmin = $this->superAdmin();
+        $partido = $this->crearPartido();
+        $partido->finalizarPartido(2, 0, Partido::ORIGEN_API);
+
+        $this->actingAs($superadmin)
+            ->get(route('superadmin.resultados.edit'))
+            ->assertOk()
+            ->assertSee('Sincronización automática')
+            ->assertSee('Oficial (API)');
     }
 
     public function test_incomplete_superadmin_result_shows_security_alert(): void

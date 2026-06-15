@@ -13,6 +13,8 @@ final class SyncReport
 
     public int $ignorados = 0;
 
+    public int $bloqueados = 0;
+
     public int $sinMapear = 0;
 
     public int $tbd = 0;
@@ -26,6 +28,7 @@ final class SyncReport
             'creados' => $this->creados,
             'finalizados' => $this->finalizados,
             'ignorados' => $this->ignorados,
+            'bloqueados' => $this->bloqueados,
             'sin_mapear' => $this->sinMapear,
             'tbd' => $this->tbd,
         ];

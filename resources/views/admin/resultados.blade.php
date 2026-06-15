@@ -19,6 +19,8 @@
             </div>
         </section>
 
+        <x-sync-status :ultima-sync="$ultimaSync" />
+
         @if (session('status'))
             <div class="mb-5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 font-bold text-[var(--app-success)] dark:border-emerald-900/50 dark:bg-emerald-950/30">{{ session('status') }}</div>
         @endif
@@ -48,10 +50,28 @@
                         </div>
                     </div>
 
-                    <div class="score-grid">
-                        <input name="resultados[{{ $partido->id }}][goles_local]" type="number" min="0" max="99" value="{{ old("resultados.{$partido->id}.goles_local", $partido->goles_local) }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
-                        <span class="text-center font-extrabold text-[var(--app-muted)]">-</span>
-                        <input name="resultados[{{ $partido->id }}][goles_visitante]" type="number" min="0" max="99" value="{{ old("resultados.{$partido->id}.goles_visitante", $partido->goles_visitante) }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
+                    <div class="flex flex-col items-stretch gap-2">
+                        <div class="score-grid">
+                            <input name="resultados[{{ $partido->id }}][goles_local]" type="number" min="0" max="99" value="{{ old("resultados.{$partido->id}.goles_local", $partido->goles_local) }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
+                            <span class="text-center font-extrabold text-[var(--app-muted)]">-</span>
+                            <input name="resultados[{{ $partido->id }}][goles_visitante]" type="number" min="0" max="99" value="{{ old("resultados.{$partido->id}.goles_visitante", $partido->goles_visitante) }}" class="w-full rounded-lg border border-[var(--app-border)] bg-[var(--app-panel)] px-3 py-2.5 text-center text-[var(--app-text)] outline-none focus:border-[var(--app-primary)] focus:ring-4 focus:ring-[var(--app-ring)]">
+                        </div>
+
+                        @if ($partido->resultado_origen === \App\Models\Partido::ORIGEN_API)
+                            <span class="inline-flex items-center justify-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                                <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.5a1 1 0 0 1-1.42 0l-3.5-3.5a1 1 0 1 1 1.414-1.414l2.79 2.79 6.79-6.79a1 1 0 0 1 1.414 0Z" clip-rule="evenodd"/></svg>
+                                Oficial (API)
+                            </span>
+                        @elseif ($partido->resultado_origen === \App\Models\Partido::ORIGEN_MANUAL)
+                            <span class="inline-flex items-center justify-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-700 dark:bg-amber-950/40 dark:text-amber-300" title="Cargado a mano. El sync automático no lo sobrescribe.">
+                                <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4 4 0 0 0-4 4v2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V5a4 4 0 0 0-4-4Zm2 6V5a2 2 0 1 0-4 0v2h4Z" clip-rule="evenodd"/></svg>
+                                Manual
+                            </span>
+                        @else
+                            <span class="inline-flex items-center justify-center rounded-full bg-[var(--app-panel-soft)] px-2.5 py-1 text-xs font-semibold text-[var(--app-muted)]">
+                                Pendiente
+                            </span>
+                        @endif
                     </div>
                 </article>
             @empty

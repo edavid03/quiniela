@@ -247,6 +247,42 @@ class PartidosSyncTest extends TestCase
         ]);
     }
 
+    // 6b. El sync marca como "api" (oficial) los partidos que finaliza.
+    public function test_sync_marks_finalized_match_as_official(): void
+    {
+        $this->equipo(1, 'MEX', 770);
+        $this->equipo(3, 'KOR', 805);
+        $partido = $this->partidoGrupos(1, 3);
+
+        $this->fakeApi([$this->match(['id' => 600])]);
+        $this->artisan('partidos:sync')->assertExitCode(0);
+
+        $this->assertDatabaseHas('partidos', [
+            'id' => $partido->id,
+            'goles_local' => 2,
+            'resultado_origen' => 'api',
+        ]);
+    }
+
+    // 6c. Manual blinda: un resultado cargado a mano no lo sobrescribe el sync.
+    public function test_manual_result_is_not_overwritten_by_sync(): void
+    {
+        $this->equipo(1, 'MEX', 770);
+        $this->equipo(3, 'KOR', 805);
+        $partido = $this->partidoGrupos(1, 3);
+        $partido->finalizarPartido(0, 0); // manual por default, distinto al 2-1 de la API
+
+        $this->fakeApi([$this->match(['id' => 601])]);
+        $this->artisan('partidos:sync')->assertExitCode(0);
+
+        $this->assertDatabaseHas('partidos', [
+            'id' => $partido->id,
+            'goles_local' => 0,
+            'goles_visitante' => 0,
+            'resultado_origen' => 'manual',
+        ]);
+    }
+
     // 7. Equipo sin mapear: se saltea sin romper.
     public function test_unmapped_team_is_skipped_without_error(): void
     {
