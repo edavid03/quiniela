@@ -70,6 +70,7 @@ Route::prefix('superadmin')->name('superadmin.')->group(function () {
         Route::resource('ligas', LigaController::class)->except(['show']);
 
         Route::get('resultados', [AdminPartidoResultadoController::class, 'edit'])->name('resultados.edit');
+        Route::get('resultados/sync-status', [AdminPartidoResultadoController::class, 'syncStatus'])->name('resultados.sync-status');
         Route::post('resultados', [AdminPartidoResultadoController::class, 'update'])->name('resultados.update');
     });
 });

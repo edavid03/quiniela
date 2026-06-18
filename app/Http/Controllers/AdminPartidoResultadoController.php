@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Partido;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,17 +18,24 @@ class AdminPartidoResultadoController extends Controller
 
     public function edit(): View
     {
-        $ultimaSync = DB::table('app_settings')
-            ->where('key', 'partidos_sync_last_run')
-            ->value('value');
-
         return view('admin.resultados', [
             'partidos' => Partido::query()
                 ->with(['local', 'visitante'])
                 ->orderBy('fecha_utc')
                 ->get(),
-            'ultimaSync' => $ultimaSync ? Carbon::parse($ultimaSync) : null,
+            'ultimaSync' => $this->ultimaSync(),
             'syncIntervalSeconds' => self::SYNC_INTERVAL_SECONDS,
+        ]);
+    }
+
+    // La card lee el last_run una sola vez al render; con sync cada 30s necesita
+    // refrescarlo en vivo. Este endpoint liviano devuelve el estado actual para
+    // que el front haga polling sin recargar la pagina (no perder el form).
+    public function syncStatus(): JsonResponse
+    {
+        return response()->json([
+            'last_run_epoch' => $this->ultimaSync()?->getTimestamp(),
+            'interval_seconds' => self::SYNC_INTERVAL_SECONDS,
         ]);
     }
 
@@ -77,5 +85,14 @@ class AdminPartidoResultadoController extends Controller
         return redirect()
             ->route('superadmin.resultados.edit')
             ->with('status', 'Resultados guardados correctamente.');
+    }
+
+    private function ultimaSync(): ?Carbon
+    {
+        $value = DB::table('app_settings')
+            ->where('key', 'partidos_sync_last_run')
+            ->value('value');
+
+        return $value ? Carbon::parse($value) : null;
     }
 }
