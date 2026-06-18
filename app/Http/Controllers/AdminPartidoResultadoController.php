@@ -11,6 +11,10 @@ use Illuminate\View\View;
 
 class AdminPartidoResultadoController extends Controller
 {
+    // Cadencia del sync automatico (partidos:sync). Debe coincidir con el
+    // intervalo del scheduler en routes/console.php (everyThirtySeconds()).
+    private const SYNC_INTERVAL_SECONDS = 30;
+
     public function edit(): View
     {
         $ultimaSync = DB::table('app_settings')
@@ -23,6 +27,7 @@ class AdminPartidoResultadoController extends Controller
                 ->orderBy('fecha_utc')
                 ->get(),
             'ultimaSync' => $ultimaSync ? Carbon::parse($ultimaSync) : null,
+            'syncIntervalSeconds' => self::SYNC_INTERVAL_SECONDS,
         ]);
     }
 
