@@ -21,6 +21,7 @@ class PartidoSyncService
      * Mapeo de la fase de la API al nombre en espanol usado en la quiniela.
      */
     private const FASES = [
+        'LAST_32' => 'Dieciseisavos',
         'LAST_16' => 'Octavos',
         'QUARTER_FINALS' => 'Cuartos',
         'SEMI_FINALS' => 'Semifinal',
