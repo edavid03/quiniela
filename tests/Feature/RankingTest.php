@@ -27,10 +27,12 @@ class RankingTest extends TestCase
         $liga = $this->createLiga();
         $user = $this->ligaUser($liga);
 
+        // El acceso al ranking vive en la navegacion principal (el atajo del
+        // dashboard se reemplazo por el cuadro de cruces).
         $this->actingAs($user)
             ->get(route('liga.dashboard', $liga))
             ->assertOk()
-            ->assertSee('Ver ranking');
+            ->assertSee(route('liga.rankings.index', $liga));
     }
 
     public function test_rankings_are_ordered_by_points(): void

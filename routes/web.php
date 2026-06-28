@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminPartidoResultadoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CrucesController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\LigaController;
@@ -143,6 +144,7 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
 
         Route::get('rankings', [RankingController::class, 'index'])->name('rankings.index');
         Route::get('resultados', [ResultadoController::class, 'index'])->name('resultados.index');
+        Route::get('cruces', [CrucesController::class, 'index'])->name('cruces.index');
         Route::get('pronosticos-publicos', [PronosticoPublicoController::class, 'index'])->name('pronosticos-publicos.index');
         Route::get('mi-desempeno', [MiDesempenoController::class, 'index'])->middleware('liga.player')->name('mi-desempeno');
 
