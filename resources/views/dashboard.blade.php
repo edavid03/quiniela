@@ -21,8 +21,7 @@
                     <a class="btn btn-primary" href="{{ route('liga.pronosticos.edit', ['liga' => $currentLiga]) }}">Crear o editar pronosticos</a>
                 @endunless
                 <a class="btn btn-secondary" href="{{ route('liga.pronosticos-publicos.index', ['liga' => $currentLiga]) }}">Pronosticos publicos</a>
-                <a class="btn btn-secondary" href="{{ route('liga.rankings.index', ['liga' => $currentLiga]) }}">Ver ranking</a>
-                <a class="btn btn-secondary" href="{{ route('liga.reglas.index', ['liga' => $currentLiga]) }}">Ver reglas</a>
+                <a class="btn btn-secondary" href="{{ route('liga.cruces.index', ['liga' => $currentLiga]) }}">Cuadro de cruces</a>
                 @if (auth()->user()->isLigaAdmin())
                     <a class="btn btn-secondary" href="{{ route('liga.admin.users.index', ['liga' => $currentLiga]) }}">Administrar liga</a>
                 @endif
