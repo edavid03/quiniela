@@ -11,7 +11,7 @@ class FaseAgrupadaTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_results_are_grouped_by_phase_in_chronological_order(): void
+    public function test_upcoming_results_appear_in_chronological_order(): void
     {
         $liga = $this->createLiga();
         $user = $this->ligaUser($liga);
@@ -19,7 +19,7 @@ class FaseAgrupadaTest extends TestCase
         $local = Equipo::create(['id' => 1, 'name' => 'Local FC', 'code' => 'LOC', 'grupo' => 'A']);
         $visitante = Equipo::create(['id' => 2, 'name' => 'Visitante FC', 'code' => 'VIS', 'grupo' => 'A']);
 
-        // Grupos es cronologicamente anterior a Octavos.
+        // El partido con estadio E1 es cronologicamente anterior al de E2.
         Partido::create([
             'local_id' => $local->id, 'visitante_id' => $visitante->id,
             'fecha_utc' => now()->utc()->addDays(1)->format('Y-m-d H:i:s'),
@@ -34,6 +34,6 @@ class FaseAgrupadaTest extends TestCase
         $this->actingAs($user)
             ->get(route('liga.resultados.index', $liga))
             ->assertOk()
-            ->assertSeeInOrder(['Fase de grupos', 'Octavos de final']);
+            ->assertSeeInOrder(['E1', 'E2']);
     }
 }
