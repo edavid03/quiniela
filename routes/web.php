@@ -134,6 +134,7 @@ Route::prefix('{liga:slug}')->middleware('liga')->name('liga.')->group(function 
                 'predictionDeadline' => $proximoPartido?->fechaCierrePronosticosUtc(),
                 'proximoPartido' => $proximoPartido,
                 'nextMatches' => Partido::query()
+                    ->proximos()
                     ->with(['local', 'visitante'])
                     ->orderBy('fecha_utc')
                     ->take(5)
