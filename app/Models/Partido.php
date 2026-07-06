@@ -71,6 +71,11 @@ class Partido extends Model
         return $query->where('fecha_utc', '>', now()->utc()->addMinutes(30)->format('Y-m-d H:i:s'));
     }
 
+    public function scopeProximos(Builder $query): Builder
+    {
+        return $query->where('fecha_utc', '>=', now()->utc()->format('Y-m-d H:i:s'));
+    }
+
     public static function proximoCierrePronosticosUtc(): ?Carbon
     {
         $proximoPartidoAbierto = static::query()
